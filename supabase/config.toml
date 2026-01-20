@@ -1,0 +1,4 @@
+project_id = "yokhviroislqhpozyipm"
+
+[functions.change-wall-color]
+verify_jwt = false
