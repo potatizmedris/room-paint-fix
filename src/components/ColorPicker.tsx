@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
 
 interface ColorOption {
   name: string;
@@ -21,6 +22,105 @@ const PRESET_COLORS: ColorOption[] = [
   { name: "Charcoal", hex: "#36454F" },
 ];
 
+// Approximate NCS to hex conversion
+function ncsToHex(ncsCode: string): string | null {
+  // Parse NCS code format: S XXYY-ZZZZ (e.g., "S 1050-Y90R")
+  const match = ncsCode.toUpperCase().match(/^S?\s*(\d{2})(\d{2})-?([YRBN])(\d{2})?([YRBN])?$/);
+  
+  if (!match) return null;
+  
+  const blackness = parseInt(match[1]) / 100;
+  const chromaticness = parseInt(match[2]) / 100;
+  const hue1 = match[3];
+  const hueValue = match[4] ? parseInt(match[4]) : 0;
+  const hue2 = match[5] || '';
+  
+  // Map NCS hue to RGB base colors
+  let r = 0, g = 0, b = 0;
+  
+  const hueString = `${hue1}${hueValue}${hue2}`;
+  
+  // Simplified hue mapping
+  if (hueString.startsWith('Y') && hueString.includes('R')) {
+    // Yellow-Red (orange range)
+    const ratio = hueValue / 100;
+    r = 255;
+    g = Math.round(255 * (1 - ratio * 0.6));
+    b = 0;
+  } else if (hueString.startsWith('R') && hueString.includes('Y')) {
+    // Red-Yellow
+    const ratio = hueValue / 100;
+    r = 255;
+    g = Math.round(255 * ratio * 0.6);
+    b = 0;
+  } else if (hueString.startsWith('R') && hueString.includes('B')) {
+    // Red-Blue (magenta range)
+    const ratio = hueValue / 100;
+    r = 255;
+    g = 0;
+    b = Math.round(255 * ratio);
+  } else if (hueString.startsWith('B') && hueString.includes('R')) {
+    // Blue-Red
+    const ratio = hueValue / 100;
+    r = Math.round(255 * ratio);
+    g = 0;
+    b = 255;
+  } else if (hueString.startsWith('B') && hueString.includes('G')) {
+    // Blue-Green (cyan range)
+    const ratio = hueValue / 100;
+    r = 0;
+    g = Math.round(255 * ratio);
+    b = 255;
+  } else if (hueString.startsWith('G') && hueString.includes('B')) {
+    // Green-Blue
+    const ratio = hueValue / 100;
+    r = 0;
+    g = 255;
+    b = Math.round(255 * ratio);
+  } else if (hueString.startsWith('G') && hueString.includes('Y')) {
+    // Green-Yellow
+    const ratio = hueValue / 100;
+    r = Math.round(255 * ratio);
+    g = 255;
+    b = 0;
+  } else if (hueString.startsWith('Y') && hueString.includes('G')) {
+    // Yellow-Green
+    const ratio = hueValue / 100;
+    r = 255;
+    g = 255;
+    b = 0;
+  } else if (hueString === 'Y') {
+    r = 255; g = 255; b = 0;
+  } else if (hueString === 'R') {
+    r = 255; g = 0; b = 0;
+  } else if (hueString === 'B') {
+    r = 0; g = 0; b = 255;
+  } else if (hueString === 'G') {
+    r = 0; g = 255; b = 0;
+  } else if (hueString === 'N') {
+    // Neutral (gray)
+    r = 128; g = 128; b = 128;
+  }
+  
+  // Apply chromaticness (saturation)
+  const gray = 128;
+  r = Math.round(gray + (r - gray) * chromaticness);
+  g = Math.round(gray + (g - gray) * chromaticness);
+  b = Math.round(gray + (b - gray) * chromaticness);
+  
+  // Apply blackness
+  r = Math.round(r * (1 - blackness));
+  g = Math.round(g * (1 - blackness));
+  b = Math.round(b * (1 - blackness));
+  
+  // Clamp values
+  r = Math.max(0, Math.min(255, r));
+  g = Math.max(0, Math.min(255, g));
+  b = Math.max(0, Math.min(255, b));
+  
+  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+}
+
 interface ColorPickerProps {
   selectedColor: ColorOption | null;
   onColorSelect: (color: ColorOption) => void;
@@ -28,7 +128,23 @@ interface ColorPickerProps {
 }
 
 export function ColorPicker({ selectedColor, onColorSelect, disabled }: ColorPickerProps) {
-  const [customColor, setCustomColor] = useState("#ffffff");
+  const [ncsCode, setNcsCode] = useState("");
+  const [ncsError, setNcsError] = useState<string | null>(null);
+
+  const handleApplyNcs = () => {
+    if (!ncsCode.trim()) {
+      setNcsError("Please enter an NCS code");
+      return;
+    }
+    
+    const hex = ncsToHex(ncsCode);
+    if (hex) {
+      setNcsError(null);
+      onColorSelect({ name: `NCS ${ncsCode.toUpperCase()}`, hex });
+    } else {
+      setNcsError("Invalid NCS code format (e.g., S 1050-Y90R)");
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -55,22 +171,34 @@ export function ColorPicker({ selectedColor, onColorSelect, disabled }: ColorPic
         ))}
       </div>
 
-      <div className="flex items-center gap-3 pt-4 border-t border-border">
-        <label className="text-sm text-muted-foreground">Custom:</label>
-        <input
-          type="color"
-          value={customColor}
-          onChange={(e) => setCustomColor(e.target.value)}
-          disabled={disabled}
-          className="w-10 h-10 rounded-lg cursor-pointer border-2 border-border disabled:opacity-50 disabled:cursor-not-allowed"
-        />
-        <button
-          onClick={() => !disabled && onColorSelect({ name: "Custom Color", hex: customColor })}
-          disabled={disabled}
-          className="text-sm text-primary hover:text-primary/80 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Apply Custom
-        </button>
+      <div className="space-y-2 pt-4 border-t border-border">
+        <label className="text-sm text-muted-foreground">NCS Code:</label>
+        <div className="flex items-center gap-3">
+          <Input
+            type="text"
+            value={ncsCode}
+            onChange={(e) => {
+              setNcsCode(e.target.value);
+              setNcsError(null);
+            }}
+            placeholder="e.g., S 1050-Y90R"
+            disabled={disabled}
+            className="flex-1"
+          />
+          <button
+            onClick={handleApplyNcs}
+            disabled={disabled}
+            className="text-sm text-primary hover:text-primary/80 font-medium disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+          >
+            Apply NCS
+          </button>
+        </div>
+        {ncsError && (
+          <p className="text-xs text-destructive">{ncsError}</p>
+        )}
+        <p className="text-xs text-muted-foreground">
+          Format: S XXYY-HUE (e.g., S 1050-Y90R, S 2030-B)
+        </p>
       </div>
 
       {selectedColor && (
