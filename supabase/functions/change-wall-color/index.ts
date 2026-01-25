@@ -25,7 +25,9 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY is not configured');
     }
 
-    const prompt = `Change the wall color in this room photo to ${colorName || targetColor}. Keep all furniture, decorations, and other elements exactly the same. Only change the wall paint color. The new wall color should be ${targetColor}. Make it look natural and realistic as if the wall was actually painted that color.`;
+    const prompt = `Edit this image: Change only the wall color to ${colorName || targetColor} (hex: ${targetColor}). Keep all furniture, decorations, floor, ceiling, and other elements exactly the same. Only repaint the walls. Make the result look natural and realistic.`;
+
+    console.log('Sending request to AI gateway with prompt:', prompt);
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -34,7 +36,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-3-pro-image-preview',
+        model: 'google/gemini-2.5-flash-image',
         messages: [
           {
             role: 'user',
@@ -57,6 +59,9 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error('AI gateway error:', response.status, errorText);
+      
       if (response.status === 429) {
         return new Response(
           JSON.stringify({ error: 'Rate limit exceeded. Please try again in a moment.' }),
@@ -69,20 +74,31 @@ serve(async (req) => {
           { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-      const errorText = await response.text();
-      console.error('AI gateway error:', response.status, errorText);
       return new Response(
-        JSON.stringify({ error: 'Failed to process image' }),
+        JSON.stringify({ error: `Failed to process image: ${errorText}` }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     const data = await response.json();
+    console.log('AI response structure:', JSON.stringify({
+      hasChoices: !!data.choices,
+      choicesLength: data.choices?.length,
+      hasMessage: !!data.choices?.[0]?.message,
+      hasImages: !!data.choices?.[0]?.message?.images,
+      imagesLength: data.choices?.[0]?.message?.images?.length,
+      messageContent: data.choices?.[0]?.message?.content?.substring(0, 200),
+    }));
+
     const editedImageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
 
     if (!editedImageUrl) {
+      console.error('No image in response. Full response:', JSON.stringify(data).substring(0, 1000));
       return new Response(
-        JSON.stringify({ error: 'No image was generated' }),
+        JSON.stringify({ 
+          error: 'The AI did not generate an image. Please try again with a clearer photo of a wall.',
+          details: data.choices?.[0]?.message?.content || 'No response content'
+        }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
