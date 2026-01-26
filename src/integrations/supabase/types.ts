@@ -14,13 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      favorites: {
+        Row: {
+          color_name: string
+          created_at: string
+          hex_value: string
+          id: string
+          photo_url: string | null
+          user_id: string
+        }
+        Insert: {
+          color_name: string
+          created_at?: string
+          hex_value: string
+          id?: string
+          photo_url?: string | null
+          user_id: string
+        }
+        Update: {
+          color_name?: string
+          created_at?: string
+          hex_value?: string
+          id?: string
+          photo_url?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_favorite_owner: { Args: { fav_id: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

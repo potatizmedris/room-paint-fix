@@ -3,8 +3,11 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { NCSColorPicker } from "@/components/NCSColorPicker";
+import { FavoritesPanel } from "@/components/FavoritesPanel";
+import { AddToFavoriteButton } from "@/components/AddToFavoriteButton";
 import { NCS_COLORS, type NCSCategory } from "@/data/ncsColors";
 import { ChevronDown } from "lucide-react";
+import type { Favorite } from "@/hooks/useFavorites";
 
 interface ColorOption {
   name: string;
@@ -117,9 +120,30 @@ interface ColorPickerProps {
   selectedColor: ColorOption | null;
   onColorSelect: (color: ColorOption) => void;
   disabled?: boolean;
+  // Favorites integration
+  favorites: Favorite[];
+  favoritesLoading: boolean;
+  onAddFavorite: (colorName: string, hexValue: string, photoBase64?: string) => Promise<unknown>;
+  onRemoveFavorite: (id: string) => Promise<boolean>;
+  isFavorite: (hexValue: string) => boolean;
+  currentPhoto: string | null;
+  isAuthenticated: boolean;
+  onAuthRequired: () => void;
 }
 
-export function ColorPicker({ selectedColor, onColorSelect, disabled }: ColorPickerProps) {
+export function ColorPicker({
+  selectedColor,
+  onColorSelect,
+  disabled,
+  favorites,
+  favoritesLoading,
+  onAddFavorite,
+  onRemoveFavorite,
+  isFavorite,
+  currentPhoto,
+  isAuthenticated,
+  onAuthRequired,
+}: ColorPickerProps) {
   const [ncsCode, setNcsCode] = useState("");
   const [ncsError, setNcsError] = useState<string | null>(null);
   const [expandedPreset, setExpandedPreset] = useState<string | null>(null);
@@ -160,14 +184,33 @@ export function ColorPicker({ selectedColor, onColorSelect, disabled }: ColorPic
     }
   };
 
+  const handleAddToFavorite = async (withPhoto: boolean) => {
+    if (!isAuthenticated) {
+      onAuthRequired();
+      return;
+    }
+    if (!selectedColor) return;
+    
+    await onAddFavorite(
+      selectedColor.name,
+      selectedColor.hex,
+      withPhoto ? currentPhoto || undefined : undefined
+    );
+  };
+
+  const handleFavoriteSelect = (favorite: Favorite) => {
+    onColorSelect({ name: favorite.color_name, hex: favorite.hex_value });
+  };
+
   return (
     <div className="space-y-4">
       <h3 className="font-serif text-lg font-medium text-foreground">Choose Wall Color</h3>
       
       <Tabs defaultValue="presets" className="w-full">
-        <TabsList className="w-full grid grid-cols-2">
+        <TabsList className="w-full grid grid-cols-3">
           <TabsTrigger value="presets">Quick Colors</TabsTrigger>
           <TabsTrigger value="ncs">NCS Database</TabsTrigger>
+          <TabsTrigger value="favorites">Favorites</TabsTrigger>
         </TabsList>
         
         <TabsContent value="presets" className="space-y-4 mt-4">
@@ -271,6 +314,31 @@ export function ColorPicker({ selectedColor, onColorSelect, disabled }: ColorPic
             selectedHex={selectedColor?.hex}
           />
         </TabsContent>
+
+        <TabsContent value="favorites" className="mt-4">
+          {!isAuthenticated ? (
+            <div className="py-8 text-center">
+              <p className="text-sm text-muted-foreground mb-3">
+                Sign in to save and access your favorite colors
+              </p>
+              <button
+                onClick={onAuthRequired}
+                className="text-sm text-primary hover:text-primary/80 font-medium"
+              >
+                Sign in
+              </button>
+            </div>
+          ) : (
+            <FavoritesPanel
+              favorites={favorites}
+              loading={favoritesLoading}
+              onSelectFavorite={handleFavoriteSelect}
+              onRemoveFavorite={onRemoveFavorite}
+              selectedHex={selectedColor?.hex}
+              disabled={disabled}
+            />
+          )}
+        </TabsContent>
       </Tabs>
 
       {selectedColor && (
@@ -279,8 +347,16 @@ export function ColorPicker({ selectedColor, onColorSelect, disabled }: ColorPic
             className="w-6 h-6 rounded-full border border-border"
             style={{ backgroundColor: selectedColor.hex }}
           />
-          <span className="text-sm font-medium text-foreground">{selectedColor.name}</span>
+          <span className="text-sm font-medium text-foreground flex-1">{selectedColor.name}</span>
           <span className="text-xs text-muted-foreground">{selectedColor.hex}</span>
+          <AddToFavoriteButton
+            colorName={selectedColor.name}
+            colorHex={selectedColor.hex}
+            currentPhoto={currentPhoto}
+            isFavorite={isFavorite(selectedColor.hex)}
+            onAdd={handleAddToFavorite}
+            disabled={disabled}
+          />
         </div>
       )}
     </div>
