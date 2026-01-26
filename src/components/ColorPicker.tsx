@@ -3,25 +3,31 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { NCSColorPicker } from "@/components/NCSColorPicker";
+import { NCS_COLORS, type NCSCategory } from "@/data/ncsColors";
+import { ChevronDown } from "lucide-react";
 
 interface ColorOption {
   name: string;
   hex: string;
 }
 
-const PRESET_COLORS: ColorOption[] = [
-  { name: "Cloud White", hex: "#F5F5F0" },
-  { name: "Soft Cream", hex: "#F5E6D3" },
-  { name: "Sage Green", hex: "#9CAF88" },
-  { name: "Ocean Blue", hex: "#5B8BA0" },
-  { name: "Dusty Rose", hex: "#D4A5A5" },
-  { name: "Warm Gray", hex: "#A8A29E" },
-  { name: "Terracotta", hex: "#CD7F5C" },
-  { name: "Navy Blue", hex: "#2C3E50" },
-  { name: "Soft Lavender", hex: "#B8A9C9" },
-  { name: "Butter Yellow", hex: "#F4E5B8" },
-  { name: "Forest Green", hex: "#4A6741" },
-  { name: "Charcoal", hex: "#36454F" },
+interface PresetColor extends ColorOption {
+  category: NCSCategory;
+}
+
+const PRESET_COLORS: PresetColor[] = [
+  { name: "Cloud White", hex: "#F5F5F0", category: "Whites & Neutrals" },
+  { name: "Soft Cream", hex: "#F5E6D3", category: "Whites & Neutrals" },
+  { name: "Sage Green", hex: "#9CAF88", category: "Greens" },
+  { name: "Ocean Blue", hex: "#5B8BA0", category: "Blues" },
+  { name: "Dusty Rose", hex: "#D4A5A5", category: "Pinks" },
+  { name: "Warm Gray", hex: "#A8A29E", category: "Grays" },
+  { name: "Terracotta", hex: "#CD7F5C", category: "Oranges" },
+  { name: "Navy Blue", hex: "#2C3E50", category: "Blues" },
+  { name: "Soft Lavender", hex: "#B8A9C9", category: "Purples" },
+  { name: "Butter Yellow", hex: "#F4E5B8", category: "Yellows" },
+  { name: "Forest Green", hex: "#4A6741", category: "Greens" },
+  { name: "Charcoal", hex: "#36454F", category: "Grays" },
 ];
 
 // Approximate NCS to hex conversion for manual entry
@@ -116,6 +122,27 @@ interface ColorPickerProps {
 export function ColorPicker({ selectedColor, onColorSelect, disabled }: ColorPickerProps) {
   const [ncsCode, setNcsCode] = useState("");
   const [ncsError, setNcsError] = useState<string | null>(null);
+  const [expandedPreset, setExpandedPreset] = useState<string | null>(null);
+
+  const getIntensityColors = (category: NCSCategory) => {
+    return NCS_COLORS.filter((c) => c.category === category).slice(0, 8);
+  };
+
+  const handlePresetClick = (color: PresetColor) => {
+    if (disabled) return;
+    if (expandedPreset === color.name) {
+      setExpandedPreset(null);
+    } else {
+      setExpandedPreset(color.name);
+    }
+    onColorSelect(color);
+  };
+
+  const handleIntensitySelect = (ncsColor: { code: string; hex: string }) => {
+    if (disabled) return;
+    onColorSelect({ name: `NCS ${ncsColor.code}`, hex: ncsColor.hex });
+    setExpandedPreset(null);
+  };
 
   const handleApplyNcs = () => {
     if (!ncsCode.trim()) {
@@ -147,22 +174,54 @@ export function ColorPicker({ selectedColor, onColorSelect, disabled }: ColorPic
             {PRESET_COLORS.map((color) => (
               <button
                 key={color.hex}
-                onClick={() => !disabled && onColorSelect(color)}
+                onClick={() => handlePresetClick(color)}
                 disabled={disabled}
                 className={cn(
                   "color-swatch group relative",
                   selectedColor?.hex === color.hex && "color-swatch-active",
+                  expandedPreset === color.name && "ring-2 ring-primary",
                   disabled && "opacity-50 cursor-not-allowed hover:scale-100"
                 )}
                 style={{ backgroundColor: color.hex }}
-                title={color.name}
+                title={`${color.name} - Click for intensities`}
               >
+                <ChevronDown className={cn(
+                  "absolute bottom-0.5 right-0.5 h-3 w-3 text-foreground/70 transition-transform",
+                  expandedPreset === color.name && "rotate-180"
+                )} />
                 <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                   {color.name}
                 </span>
               </button>
             ))}
           </div>
+          
+          {expandedPreset && (
+            <div className="p-3 rounded-lg border border-border bg-secondary/30 animate-in fade-in slide-in-from-top-2 duration-200">
+              <p className="text-xs text-muted-foreground mb-2">
+                {expandedPreset} intensities ({PRESET_COLORS.find(c => c.name === expandedPreset)?.category})
+              </p>
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                {getIntensityColors(PRESET_COLORS.find(c => c.name === expandedPreset)?.category as NCSCategory).map((ncsColor) => (
+                  <button
+                    key={ncsColor.code}
+                    onClick={() => handleIntensitySelect(ncsColor)}
+                    disabled={disabled}
+                    className={cn(
+                      "flex-shrink-0 w-10 h-10 rounded-lg border-2 transition-all",
+                      "hover:scale-110 hover:shadow-md",
+                      selectedColor?.hex === ncsColor.hex
+                        ? "border-primary ring-2 ring-primary/30"
+                        : "border-transparent hover:border-border",
+                      disabled && "opacity-50 cursor-not-allowed hover:scale-100"
+                    )}
+                    style={{ backgroundColor: ncsColor.hex }}
+                    title={`${ncsColor.name} (${ncsColor.code})`}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
           
           <div className="space-y-2 pt-4 border-t border-border">
             <label className="text-sm text-muted-foreground">Custom NCS Code:</label>
