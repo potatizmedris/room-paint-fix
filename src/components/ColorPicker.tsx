@@ -130,12 +130,13 @@ export function ColorPicker({ selectedColor, onColorSelect, disabled }: ColorPic
 
   const handlePresetClick = (color: PresetColor) => {
     if (disabled) return;
-    if (expandedPreset === color.name) {
-      setExpandedPreset(null);
-    } else {
-      setExpandedPreset(color.name);
-    }
     onColorSelect(color);
+  };
+
+  const toggleExpand = (e: React.MouseEvent, colorName: string) => {
+    e.stopPropagation();
+    if (disabled) return;
+    setExpandedPreset((prev) => (prev === colorName ? null : colorName));
   };
 
   const handleIntensitySelect = (ncsColor: { code: string; hex: string }) => {
@@ -172,27 +173,39 @@ export function ColorPicker({ selectedColor, onColorSelect, disabled }: ColorPic
         <TabsContent value="presets" className="space-y-4 mt-4">
           <div className="grid grid-cols-6 gap-3">
             {PRESET_COLORS.map((color) => (
-              <button
-                key={color.hex}
-                onClick={() => handlePresetClick(color)}
-                disabled={disabled}
-                className={cn(
-                  "color-swatch group relative",
-                  selectedColor?.hex === color.hex && "color-swatch-active",
-                  expandedPreset === color.name && "ring-2 ring-primary",
-                  disabled && "opacity-50 cursor-not-allowed hover:scale-100"
-                )}
-                style={{ backgroundColor: color.hex }}
-                title={`${color.name} - Click for intensities`}
-              >
-                <ChevronDown className={cn(
-                  "absolute bottom-0.5 right-0.5 h-3 w-3 text-foreground/70 transition-transform",
-                  expandedPreset === color.name && "rotate-180"
-                )} />
+              <div key={color.hex} className="relative group">
+                <button
+                  onClick={() => handlePresetClick(color)}
+                  disabled={disabled}
+                  className={cn(
+                    "color-swatch w-full",
+                    selectedColor?.hex === color.hex && "color-swatch-active",
+                    disabled && "opacity-50 cursor-not-allowed hover:scale-100"
+                  )}
+                  style={{ backgroundColor: color.hex }}
+                  title={color.name}
+                />
+                <button
+                  onClick={(e) => toggleExpand(e, color.name)}
+                  disabled={disabled}
+                  className={cn(
+                    "absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-background border border-border",
+                    "flex items-center justify-center shadow-sm",
+                    "hover:bg-secondary transition-colors",
+                    expandedPreset === color.name && "bg-primary border-primary",
+                    disabled && "opacity-50 cursor-not-allowed"
+                  )}
+                  title="Show intensities"
+                >
+                  <ChevronDown className={cn(
+                    "h-3 w-3 transition-transform",
+                    expandedPreset === color.name ? "rotate-180 text-primary-foreground" : "text-muted-foreground"
+                  )} />
+                </button>
                 <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                   {color.name}
                 </span>
-              </button>
+              </div>
             ))}
           </div>
           
