@@ -3,13 +3,27 @@ import { ImageUploader } from "@/components/ImageUploader";
 import { ColorPicker, type ColorOption } from "@/components/ColorPicker";
 import { ImagePreview } from "@/components/ImagePreview";
 import { ProcessingOverlay } from "@/components/ProcessingOverlay";
+import { AuthDialog } from "@/components/AuthDialog";
 import { useWallColorChanger } from "@/hooks/useWallColorChanger";
-import { Paintbrush, Sparkles } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useFavorites } from "@/hooks/useFavorites";
+import { Paintbrush, Sparkles, User, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Index = () => {
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<ColorOption | null>(null);
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  
   const { isProcessing, processedImage, changeWallColor, clearProcessedImage } = useWallColorChanger();
+  const { user, loading: authLoading, signOut } = useAuth();
+  const { favorites, loading: favoritesLoading, addFavorite, removeFavorite, isFavorite } = useFavorites(user?.id);
 
   const handleImageSelect = (imageData: string) => {
     setOriginalImage(imageData);
@@ -29,17 +43,49 @@ const Index = () => {
     }
   };
 
+  const handleSignOut = async () => {
+    await signOut();
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-            <Paintbrush className="w-5 h-5 text-primary-foreground" />
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+              <Paintbrush className="w-5 h-5 text-primary-foreground" />
+            </div>
+            <div>
+              <h1 className="font-serif text-xl font-semibold text-foreground">Wall Color Studio</h1>
+              <p className="text-xs text-muted-foreground">Visualize your perfect wall color</p>
+            </div>
           </div>
+
+          {/* Auth Section */}
           <div>
-            <h1 className="font-serif text-xl font-semibold text-foreground">Wall Color Studio</h1>
-            <p className="text-xs text-muted-foreground">Visualize your perfect wall color</p>
+            {authLoading ? (
+              <div className="w-8 h-8 rounded-full bg-secondary animate-pulse" />
+            ) : user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="gap-2">
+                    <User className="w-4 h-4" />
+                    <span className="hidden sm:inline">{user.email?.split("@")[0]}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sign out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button variant="outline" size="sm" onClick={() => setAuthDialogOpen(true)}>
+                Sign in
+              </Button>
+            )}
           </div>
         </div>
       </header>
@@ -117,6 +163,14 @@ const Index = () => {
                     selectedColor={selectedColor}
                     onColorSelect={handleColorSelect}
                     disabled={isProcessing}
+                    favorites={favorites}
+                    favoritesLoading={favoritesLoading}
+                    onAddFavorite={addFavorite}
+                    onRemoveFavorite={removeFavorite}
+                    isFavorite={isFavorite}
+                    currentPhoto={originalImage}
+                    isAuthenticated={!!user}
+                    onAuthRequired={() => setAuthDialogOpen(true)}
                   />
 
                   <div className="mt-6 pt-6 border-t border-border">
@@ -139,6 +193,9 @@ const Index = () => {
           </p>
         </div>
       </footer>
+
+      {/* Auth Dialog */}
+      <AuthDialog open={authDialogOpen} onOpenChange={setAuthDialogOpen} />
     </div>
   );
 };
