@@ -22,7 +22,7 @@ export function StartScreen({ onContinueAsGuest, onCreateAccount }: StartScreenP
 
         {/* Title */}
         <h1 className="font-serif text-4xl font-semibold text-foreground mb-3">
-          Wall Color Studio
+          SnapNFix
         </h1>
         <p className="text-muted-foreground mb-10">
           Visualize your perfect wall color with AI-powered room transformation
