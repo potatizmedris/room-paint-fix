@@ -25,7 +25,7 @@ export function StartScreen({ onContinueAsGuest, onCreateAccount }: StartScreenP
           SnapNFix
         </h1>
         <p className="text-muted-foreground mb-10">
-          Visualize your perfect home with AI-powered room transformation and realize your project directly by choosing well-trusted craftsmen
+          Visualize your perfect home with AI-powered room transformation and realize your project directly by choosing from well-trusted craftsmen
         </p>
 
         {/* Action Buttons */}
