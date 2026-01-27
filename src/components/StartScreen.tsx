@@ -1,5 +1,6 @@
-import { Paintbrush, UserPlus, ArrowRight } from "lucide-react";
+import { UserPlus, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import processLogo from "@/assets/process-logo.png";
 
 interface StartScreenProps {
   onContinueAsGuest: () => void;
@@ -11,8 +12,12 @@ export function StartScreen({ onContinueAsGuest, onCreateAccount }: StartScreenP
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
       <div className="max-w-md w-full text-center animate-fade-in">
         {/* Logo */}
-        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center mx-auto mb-6">
-          <Paintbrush className="w-10 h-10 text-primary-foreground" />
+        <div className="mx-auto mb-6">
+          <img 
+            src={processLogo} 
+            alt="Wall Color Studio Process" 
+            className="w-48 h-auto mx-auto"
+          />
         </div>
 
         {/* Title */}
