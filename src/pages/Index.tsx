@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ImageUploader } from "@/components/ImageUploader";
 import { ColorPicker, type ColorOption } from "@/components/ColorPicker";
 import { ImagePreview } from "@/components/ImagePreview";
 import { ProcessingOverlay } from "@/components/ProcessingOverlay";
 import { AuthDialog } from "@/components/AuthDialog";
+import { StartScreen } from "@/components/StartScreen";
 import { useWallColorChanger } from "@/hooks/useWallColorChanger";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
@@ -20,10 +21,18 @@ const Index = () => {
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<ColorOption | null>(null);
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  const [hasEnteredStudio, setHasEnteredStudio] = useState(false);
   
   const { isProcessing, processedImage, changeWallColor, clearProcessedImage } = useWallColorChanger();
   const { user, loading: authLoading, signOut } = useAuth();
   const { favorites, loading: favoritesLoading, addFavorite, removeFavorite, isFavorite } = useFavorites(user?.id);
+
+  // Skip start screen if user is already authenticated
+  useEffect(() => {
+    if (user && !authLoading) {
+      setHasEnteredStudio(true);
+    }
+  }, [user, authLoading]);
 
   const handleImageSelect = (imageData: string) => {
     setOriginalImage(imageData);
@@ -46,6 +55,36 @@ const Index = () => {
   const handleSignOut = async () => {
     await signOut();
   };
+
+  const handleContinueAsGuest = () => {
+    setHasEnteredStudio(true);
+  };
+
+  const handleCreateAccount = () => {
+    setAuthDialogOpen(true);
+  };
+
+  // Show start screen if not entered studio yet and not loading auth
+  if (!hasEnteredStudio && !authLoading) {
+    return (
+      <>
+        <StartScreen
+          onContinueAsGuest={handleContinueAsGuest}
+          onCreateAccount={handleCreateAccount}
+        />
+        <AuthDialog 
+          open={authDialogOpen} 
+          onOpenChange={(open) => {
+            setAuthDialogOpen(open);
+            // If dialog closes and user is now authenticated, enter studio
+            if (!open && user) {
+              setHasEnteredStudio(true);
+            }
+          }} 
+        />
+      </>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
