@@ -162,7 +162,7 @@ const Index = () => {
                   <div className="w-12 h-12 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center">
                     <Paintbrush className="w-6 h-6 text-secondary-foreground" />
                   </div>
-                  <h3 className="font-medium text-foreground mb-2">12+ Colors</h3>
+                  <h3 className="font-medium text-foreground mb-2">100+ Colors</h3>
                   <p className="text-sm text-muted-foreground">
                     Choose from curated designer colors or pick your own custom shade
                   </p>
