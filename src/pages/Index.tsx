@@ -5,6 +5,7 @@ import { ImagePreview } from "@/components/ImagePreview";
 import { ProcessingOverlay } from "@/components/ProcessingOverlay";
 import { AuthDialog } from "@/components/AuthDialog";
 import { StartScreen } from "@/components/StartScreen";
+import { ProjectTypePicker, type ProjectType } from "@/components/ProjectTypePicker";
 import { useWallColorChanger } from "@/hooks/useWallColorChanger";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
@@ -22,6 +23,7 @@ const Index = () => {
   const [selectedColor, setSelectedColor] = useState<ColorOption | null>(null);
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [hasEnteredStudio, setHasEnteredStudio] = useState(false);
+  const [selectedProjectType, setSelectedProjectType] = useState<ProjectType | null>(null);
   
   const { isProcessing, processedImage, changeWallColor, clearProcessedImage } = useWallColorChanger();
   const { user, loading: authLoading, signOut } = useAuth();
@@ -64,6 +66,18 @@ const Index = () => {
     setAuthDialogOpen(true);
   };
 
+  const handleSelectProjectType = (projectType: ProjectType) => {
+    setSelectedProjectType(projectType);
+  };
+
+  const handleBackToProjectPicker = () => {
+    setSelectedProjectType(null);
+  };
+
+  const handleBackToStart = () => {
+    setHasEnteredStudio(false);
+  };
+
   // Show start screen if not entered studio yet and not loading auth
   if (!hasEnteredStudio && !authLoading) {
     return (
@@ -83,6 +97,16 @@ const Index = () => {
           }} 
         />
       </>
+    );
+  }
+
+  // Show project type picker if entered but no project selected
+  if (!selectedProjectType) {
+    return (
+      <ProjectTypePicker
+        onSelectProject={handleSelectProjectType}
+        onBack={handleBackToStart}
+      />
     );
   }
 
