@@ -203,14 +203,6 @@ const Index = () => {
                   </p>
                 </div>
               </div>
-
-              {/* Disclaimer */}
-              <div className="mt-8 text-center">
-                <p className="text-xs text-muted-foreground max-w-lg mx-auto">
-                  Note: Photo quality may vary depending on lighting conditions. 
-                  Craftsmen will not use the quality of the photo as a basis for their pricing.
-                </p>
-              </div>
             </div>
           ) : (
             // Editor State
