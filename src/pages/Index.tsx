@@ -260,7 +260,7 @@ const Index = () => {
       <footer className="border-t border-border mt-auto py-6">
         <div className="container mx-auto px-4 text-center">
           <p className="text-sm text-muted-foreground">
-            Powered by AI • Results may vary based on image quality and lighting
+            Powered by AI • Results may vary based on image quality and lighting • Pricing will not be based on image quality
           </p>
         </div>
       </footer>
