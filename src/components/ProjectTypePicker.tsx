@@ -1,4 +1,4 @@
-import { Paintbrush, Wrench, HardHat, Grid3X3, Hammer, Lightbulb, ArrowLeft } from "lucide-react";
+import { Paintbrush, Wrench, HardHat, Grid3X3, Hammer, Lightbulb, ArrowLeft, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -15,6 +15,7 @@ interface ProjectOption {
   title: string;
   description: string;
   icon: React.ReactNode;
+  available: boolean;
 }
 
 const projectOptions: ProjectOption[] = [
@@ -23,36 +24,42 @@ const projectOptions: ProjectOption[] = [
     title: "Painting Work",
     description: "Wall painting, interior & exterior",
     icon: <Paintbrush className="w-8 h-8" />,
+    available: true,
   },
   {
     id: "plumbing",
     title: "Plumbing",
     description: "Pipes, fixtures & installations",
     icon: <Wrench className="w-8 h-8" />,
+    available: false,
   },
   {
     id: "construction",
     title: "Construction",
     description: "Building & renovation projects",
     icon: <HardHat className="w-8 h-8" />,
+    available: false,
   },
   {
     id: "flooring",
     title: "Floor Laying",
     description: "Tiles, hardwood & laminate",
     icon: <Grid3X3 className="w-8 h-8" />,
+    available: false,
   },
   {
     id: "carpentry",
     title: "Carpentry",
     description: "Custom woodwork & furniture",
     icon: <Hammer className="w-8 h-8" />,
+    available: false,
   },
   {
     id: "electrical",
     title: "Electrical",
     description: "Wiring, lighting & outlets",
     icon: <Lightbulb className="w-8 h-8" />,
+    available: false,
   },
 ];
 
@@ -96,21 +103,50 @@ export function ProjectTypePicker({ onSelectProject, onBack }: ProjectTypePicker
             {projectOptions.map((project) => (
               <Card 
                 key={project.id}
-                className="group cursor-pointer transition-all duration-200 hover:shadow-lg hover:border-primary/50 hover:-translate-y-1"
-                onClick={() => onSelectProject(project.id)}
+                className={`group transition-all duration-200 ${
+                  project.available 
+                    ? "cursor-pointer hover:shadow-lg hover:border-primary/50 hover:-translate-y-1" 
+                    : "cursor-not-allowed opacity-60"
+                }`}
+                onClick={() => project.available && onSelectProject(project.id)}
               >
-                <CardContent className="p-6 text-center">
-                  <div className="w-16 h-16 rounded-2xl bg-secondary mx-auto mb-4 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                    <span className="text-secondary-foreground group-hover:text-primary transition-colors">
+                <CardContent className="p-6 text-center relative">
+                  {/* Lock overlay for unavailable options */}
+                  {!project.available && (
+                    <div className="absolute top-3 right-3">
+                      <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center">
+                        <Lock className="w-4 h-4 text-muted-foreground" />
+                      </div>
+                    </div>
+                  )}
+                  <div className={`w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center transition-colors ${
+                    project.available 
+                      ? "bg-secondary group-hover:bg-primary/10" 
+                      : "bg-muted"
+                  }`}>
+                    <span className={`transition-colors ${
+                      project.available 
+                        ? "text-secondary-foreground group-hover:text-primary" 
+                        : "text-muted-foreground"
+                    }`}>
                       {project.icon}
                     </span>
                   </div>
-                  <h3 className="font-medium text-foreground mb-1 group-hover:text-primary transition-colors">
+                  <h3 className={`font-medium mb-1 transition-colors ${
+                    project.available 
+                      ? "text-foreground group-hover:text-primary" 
+                      : "text-muted-foreground"
+                  }`}>
                     {project.title}
                   </h3>
                   <p className="text-sm text-muted-foreground">
                     {project.description}
                   </p>
+                  {!project.available && (
+                    <p className="text-xs text-muted-foreground mt-2 italic">
+                      Coming soon
+                    </p>
+                  )}
                 </CardContent>
               </Card>
             ))}
