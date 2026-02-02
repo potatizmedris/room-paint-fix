@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ImageUploader } from "@/components/ImageUploader";
 import { ColorPicker, type ColorOption } from "@/components/ColorPicker";
 import { ImagePreview } from "@/components/ImagePreview";
@@ -7,6 +7,7 @@ import { AuthDialog } from "@/components/AuthDialog";
 import { StartScreen } from "@/components/StartScreen";
 import { PathPicker, type UserPath } from "@/components/PathPicker";
 import { ProjectTypePicker, type ProjectType } from "@/components/ProjectTypePicker";
+import { RoomGallery, type ProcessedRoom } from "@/components/RoomGallery";
 import { useWallColorChanger } from "@/hooks/useWallColorChanger";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
@@ -19,6 +20,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+const generateRoomId = () => `room-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
 const Index = () => {
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<ColorOption | null>(null);
@@ -26,6 +29,10 @@ const Index = () => {
   const [hasEnteredStudio, setHasEnteredStudio] = useState(false);
   const [selectedPath, setSelectedPath] = useState<UserPath | null>(null);
   const [selectedProjectType, setSelectedProjectType] = useState<ProjectType | null>(null);
+  
+  // Multi-room state
+  const [rooms, setRooms] = useState<ProcessedRoom[]>([]);
+  const [currentRoomId, setCurrentRoomId] = useState<string | null>(null);
   
   const { isProcessing, processedImage, changeWallColor, clearProcessedImage } = useWallColorChanger();
   const { user, loading: authLoading, signOut } = useAuth();
@@ -38,14 +45,43 @@ const Index = () => {
     }
   }, [user, authLoading]);
 
-  const handleImageSelect = (imageData: string) => {
+  // Update room's processed image when processing completes
+  useEffect(() => {
+    if (processedImage && currentRoomId && selectedColor) {
+      setRooms((prev) =>
+        prev.map((room) =>
+          room.id === currentRoomId
+            ? { ...room, processedImage, colorName: selectedColor.name, colorHex: selectedColor.hex }
+            : room
+        )
+      );
+    }
+  }, [processedImage, currentRoomId, selectedColor]);
+
+  const handleImageSelect = useCallback((imageData: string) => {
+    const newRoomId = generateRoomId();
+    const newRoom: ProcessedRoom = {
+      id: newRoomId,
+      originalImage: imageData,
+      processedImage: null,
+      colorName: "",
+      colorHex: "#FFFFFF",
+    };
+    
+    setRooms((prev) => [...prev, newRoom]);
+    setCurrentRoomId(newRoomId);
     setOriginalImage(imageData);
+    setSelectedColor(null);
     clearProcessedImage();
-  };
+  }, [clearProcessedImage]);
 
   const handleClearImage = () => {
+    if (currentRoomId) {
+      setRooms((prev) => prev.filter((room) => room.id !== currentRoomId));
+    }
     setOriginalImage(null);
     setSelectedColor(null);
+    setCurrentRoomId(null);
     clearProcessedImage();
   };
 
@@ -54,6 +90,38 @@ const Index = () => {
     if (originalImage) {
       changeWallColor(originalImage, color);
     }
+  };
+
+  const handleSelectRoom = (roomId: string) => {
+    const room = rooms.find((r) => r.id === roomId);
+    if (room) {
+      setCurrentRoomId(roomId);
+      setOriginalImage(room.originalImage);
+      setSelectedColor(room.colorName ? { name: room.colorName, hex: room.colorHex } : null);
+      // Note: We don't call clearProcessedImage here because we want to show the saved processed image
+    }
+  };
+
+  const handleRemoveRoom = (roomId: string) => {
+    setRooms((prev) => prev.filter((room) => room.id !== roomId));
+    if (currentRoomId === roomId) {
+      const remainingRooms = rooms.filter((room) => room.id !== roomId);
+      if (remainingRooms.length > 0) {
+        handleSelectRoom(remainingRooms[remainingRooms.length - 1].id);
+      } else {
+        setOriginalImage(null);
+        setSelectedColor(null);
+        setCurrentRoomId(null);
+        clearProcessedImage();
+      }
+    }
+  };
+
+  const handleAddRoom = () => {
+    setOriginalImage(null);
+    setSelectedColor(null);
+    setCurrentRoomId(null);
+    clearProcessedImage();
   };
 
   const handleSignOut = async () => {
@@ -237,13 +305,23 @@ const Index = () => {
             </div>
           ) : (
             // Editor State
-            <div className="animate-fade-in space-y-6">
+            <div className="animate-fade-in space-y-4">
+              {/* Room Gallery */}
+              <RoomGallery
+                rooms={rooms}
+                currentRoomId={currentRoomId}
+                onSelectRoom={handleSelectRoom}
+                onRemoveRoom={handleRemoveRoom}
+                onAddRoom={handleAddRoom}
+                disabled={isProcessing}
+              />
+
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Image Preview */}
                 <div className="lg:col-span-2 relative">
                   <ImagePreview
                     originalImage={originalImage}
-                    processedImage={processedImage}
+                    processedImage={rooms.find(r => r.id === currentRoomId)?.processedImage || processedImage}
                     onClear={handleClearImage}
                   />
                   {isProcessing && (
