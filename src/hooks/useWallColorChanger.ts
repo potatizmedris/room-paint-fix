@@ -2,12 +2,17 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { ColorOption } from "@/components/ColorPicker";
+import type { SurfaceTarget } from "@/components/SurfaceTargetPicker";
 
 export function useWallColorChanger() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [processedImage, setProcessedImage] = useState<string | null>(null);
 
-  const changeWallColor = async (imageBase64: string, color: ColorOption) => {
+  const changeWallColor = async (
+    imageBase64: string,
+    color: ColorOption,
+    surfaceTargets: SurfaceTarget[] = ["walls"]
+  ) => {
     setIsProcessing(true);
     setProcessedImage(null);
 
@@ -17,6 +22,7 @@ export function useWallColorChanger() {
           imageBase64,
           targetColor: color.hex,
           colorName: color.name,
+          surfaceTargets,
         },
       });
 
@@ -30,13 +36,13 @@ export function useWallColorChanger() {
 
       if (data.imageUrl) {
         setProcessedImage(data.imageUrl);
-        toast.success("Wall color changed successfully!");
+        toast.success("Color changed successfully!");
       } else {
         throw new Error("No image was returned");
       }
     } catch (error) {
-      console.error("Error changing wall color:", error);
-      const message = error instanceof Error ? error.message : "Failed to change wall color";
+      console.error("Error changing color:", error);
+      const message = error instanceof Error ? error.message : "Failed to change color";
       toast.error(message);
     } finally {
       setIsProcessing(false);

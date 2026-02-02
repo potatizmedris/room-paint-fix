@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageBase64, targetColor, colorName } = await req.json();
+    const { imageBase64, targetColor, colorName, surfaceTargets = ['walls'] } = await req.json();
     
     if (!imageBase64 || !targetColor) {
       return new Response(
@@ -25,7 +25,16 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY is not configured');
     }
 
-    const prompt = `Edit this image: Change only the wall color to ${colorName || targetColor} (hex: ${targetColor}). Keep all furniture, decorations, floor, ceiling, and other elements exactly the same. Only repaint the walls. Make the result look natural and realistic.`;
+    // Build surface-specific prompt
+    const surfaces: string[] = surfaceTargets as string[];
+    const surfaceList = surfaces.join(' and ');
+    const keepList: string[] = [];
+    if (!surfaces.includes('walls')) keepList.push('walls');
+    if (!surfaces.includes('floor')) keepList.push('floor');
+    if (!surfaces.includes('ceiling')) keepList.push('ceiling');
+    keepList.push('furniture', 'decorations', 'fixtures');
+    
+    const prompt = `Edit this image: Change ONLY the ${surfaceList} color to ${colorName || targetColor} (hex: ${targetColor}). Keep ${keepList.join(', ')} exactly the same. Only repaint the ${surfaceList}. Make the result look natural and realistic.`;
 
     console.log('Sending request to AI gateway with prompt:', prompt);
 

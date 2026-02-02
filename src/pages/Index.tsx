@@ -8,6 +8,7 @@ import { StartScreen } from "@/components/StartScreen";
 import { PathPicker, type UserPath } from "@/components/PathPicker";
 import { ProjectTypePicker, type ProjectType } from "@/components/ProjectTypePicker";
 import { RoomGallery, type ProcessedRoom } from "@/components/RoomGallery";
+import { SurfaceTargetPicker, type SurfaceTarget } from "@/components/SurfaceTargetPicker";
 import { useWallColorChanger } from "@/hooks/useWallColorChanger";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
@@ -33,6 +34,9 @@ const Index = () => {
   // Multi-room state
   const [rooms, setRooms] = useState<ProcessedRoom[]>([]);
   const [currentRoomId, setCurrentRoomId] = useState<string | null>(null);
+  
+  // Surface target state
+  const [surfaceTargets, setSurfaceTargets] = useState<SurfaceTarget[]>(["walls"]);
   
   const { isProcessing, processedImage, changeWallColor, clearProcessedImage } = useWallColorChanger();
   const { user, loading: authLoading, signOut } = useAuth();
@@ -88,7 +92,7 @@ const Index = () => {
   const handleColorSelect = (color: ColorOption) => {
     setSelectedColor(color);
     if (originalImage) {
-      changeWallColor(originalImage, color);
+      changeWallColor(originalImage, color, surfaceTargets);
     }
   };
 
@@ -330,7 +334,15 @@ const Index = () => {
                 </div>
 
                 {/* Color Picker Sidebar */}
-                <div className="glass-card rounded-2xl p-6">
+                <div className="glass-card rounded-2xl p-6 space-y-6">
+                  <SurfaceTargetPicker
+                    selectedTargets={surfaceTargets}
+                    onTargetsChange={setSurfaceTargets}
+                    disabled={isProcessing}
+                  />
+                  
+                  <div className="border-t border-border" />
+                  
                   <ColorPicker
                     selectedColor={selectedColor}
                     onColorSelect={handleColorSelect}
