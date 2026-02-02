@@ -207,10 +207,10 @@ export function ColorPicker({
       <h3 className="font-serif text-lg font-medium text-foreground">Choose Wall Color</h3>
       
       <Tabs defaultValue="presets" className="w-full">
-        <TabsList className="w-full grid grid-cols-3 gap-1">
-          <TabsTrigger value="presets" className="text-xs sm:text-sm px-2">Quick Colors</TabsTrigger>
-          <TabsTrigger value="ncs" className="text-xs sm:text-sm px-2">NCS Database</TabsTrigger>
-          <TabsTrigger value="favorites" className="text-xs sm:text-sm px-2">Favorites</TabsTrigger>
+        <TabsList className="w-full grid grid-cols-3">
+          <TabsTrigger value="presets" className="text-[11px] sm:text-sm px-1 sm:px-3">Quick</TabsTrigger>
+          <TabsTrigger value="ncs" className="text-[11px] sm:text-sm px-1 sm:px-3">NCS</TabsTrigger>
+          <TabsTrigger value="favorites" className="text-[11px] sm:text-sm px-1 sm:px-3">Favorites</TabsTrigger>
         </TabsList>
         
         <TabsContent value="presets" className="space-y-4 mt-4">
