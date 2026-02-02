@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageBase64, targetColor, colorName, surfaceTargets = ['walls'] } = await req.json();
+    const { imageBase64, targetColor, colorName, surfaceTarget = 'walls' } = await req.json();
     
     if (!imageBase64 || !targetColor) {
       return new Response(
@@ -26,15 +26,21 @@ serve(async (req) => {
     }
 
     // Build surface-specific prompt
-    const surfaces: string[] = surfaceTargets as string[];
-    const surfaceList = surfaces.join(' and ');
-    const keepList: string[] = [];
-    if (!surfaces.includes('walls')) keepList.push('walls');
-    if (!surfaces.includes('floor')) keepList.push('floor');
-    if (!surfaces.includes('ceiling')) keepList.push('ceiling');
-    keepList.push('furniture', 'decorations', 'fixtures');
+    let surfaceText: string;
+    let keepText: string;
     
-    const prompt = `Edit this image: Change ONLY the ${surfaceList} color to ${colorName || targetColor} (hex: ${targetColor}). Keep ${keepList.join(', ')} exactly the same. Only repaint the ${surfaceList}. Make the result look natural and realistic.`;
+    if (surfaceTarget === 'both') {
+      surfaceText = 'walls and ceiling';
+      keepText = 'floor, furniture, decorations, fixtures';
+    } else if (surfaceTarget === 'ceiling') {
+      surfaceText = 'ceiling';
+      keepText = 'walls, floor, furniture, decorations, fixtures';
+    } else {
+      surfaceText = 'walls';
+      keepText = 'ceiling, floor, furniture, decorations, fixtures';
+    }
+    
+    const prompt = `Edit this image: Change ONLY the ${surfaceText} color to ${colorName || targetColor} (hex: ${targetColor}). Keep ${keepText} exactly the same. Only repaint the ${surfaceText}. Make the result look natural and realistic.`;
 
     console.log('Sending request to AI gateway with prompt:', prompt);
 

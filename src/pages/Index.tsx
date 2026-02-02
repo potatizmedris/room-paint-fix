@@ -36,7 +36,7 @@ const Index = () => {
   const [currentRoomId, setCurrentRoomId] = useState<string | null>(null);
   
   // Surface target state
-  const [surfaceTargets, setSurfaceTargets] = useState<SurfaceTarget[]>(["walls"]);
+  const [surfaceTarget, setSurfaceTarget] = useState<SurfaceTarget>("walls");
   
   const { isProcessing, processedImage, changeWallColor, clearProcessedImage } = useWallColorChanger();
   const { user, loading: authLoading, signOut } = useAuth();
@@ -92,7 +92,7 @@ const Index = () => {
   const handleColorSelect = (color: ColorOption) => {
     setSelectedColor(color);
     if (originalImage) {
-      changeWallColor(originalImage, color, surfaceTargets);
+      changeWallColor(originalImage, color, surfaceTarget);
     }
   };
 
@@ -336,8 +336,8 @@ const Index = () => {
                 {/* Color Picker Sidebar */}
                 <div className="glass-card rounded-2xl p-6 space-y-6">
                   <SurfaceTargetPicker
-                    selectedTargets={surfaceTargets}
-                    onTargetsChange={setSurfaceTargets}
+                    selectedTarget={surfaceTarget}
+                    onTargetChange={setSurfaceTarget}
                     disabled={isProcessing}
                   />
                   

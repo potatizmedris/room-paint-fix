@@ -11,7 +11,7 @@ export function useWallColorChanger() {
   const changeWallColor = async (
     imageBase64: string,
     color: ColorOption,
-    surfaceTargets: SurfaceTarget[] = ["walls"]
+    surfaceTarget: SurfaceTarget = "walls"
   ) => {
     setIsProcessing(true);
     setProcessedImage(null);
@@ -22,7 +22,7 @@ export function useWallColorChanger() {
           imageBase64,
           targetColor: color.hex,
           colorName: color.name,
-          surfaceTargets,
+          surfaceTarget,
         },
       });
 
