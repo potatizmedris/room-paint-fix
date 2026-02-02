@@ -9,10 +9,11 @@ import { PathPicker, type UserPath } from "@/components/PathPicker";
 import { ProjectTypePicker, type ProjectType } from "@/components/ProjectTypePicker";
 import { RoomGallery, type ProcessedRoom } from "@/components/RoomGallery";
 import { SurfaceTargetPicker, type SurfaceTarget } from "@/components/SurfaceTargetPicker";
+import { CraftsmenQuestionnaire } from "@/components/CraftsmenQuestionnaire";
 import { useWallColorChanger } from "@/hooks/useWallColorChanger";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
-import { Paintbrush, Sparkles, User, LogOut } from "lucide-react";
+import { Paintbrush, Sparkles, User, LogOut, Hammer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -27,6 +28,7 @@ const Index = () => {
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<ColorOption | null>(null);
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  const [craftsmenDialogOpen, setCraftsmenDialogOpen] = useState(false);
   const [hasEnteredStudio, setHasEnteredStudio] = useState(false);
   const [selectedPath, setSelectedPath] = useState<UserPath | null>(null);
   const [selectedProjectType, setSelectedProjectType] = useState<ProjectType | null>(null);
@@ -357,7 +359,14 @@ const Index = () => {
                     onAuthRequired={() => setAuthDialogOpen(true)}
                   />
 
-                  <div className="mt-6 pt-6 border-t border-border">
+                  <div className="mt-6 pt-6 border-t border-border space-y-4">
+                    <Button
+                      onClick={() => setCraftsmenDialogOpen(true)}
+                      className="w-full gap-2 bg-primary hover:bg-primary/90"
+                    >
+                      <Hammer className="w-4 h-4" />
+                      Find Craftsmen
+                    </Button>
                     <p className="text-xs text-muted-foreground">
                       Tip: Click any color to instantly preview it on your wall. The AI will preserve all furniture and decorations.
                     </p>
@@ -380,6 +389,9 @@ const Index = () => {
 
       {/* Auth Dialog */}
       <AuthDialog open={authDialogOpen} onOpenChange={setAuthDialogOpen} />
+      
+      {/* Craftsmen Questionnaire Dialog */}
+      <CraftsmenQuestionnaire open={craftsmenDialogOpen} onOpenChange={setCraftsmenDialogOpen} />
     </div>
   );
 };
