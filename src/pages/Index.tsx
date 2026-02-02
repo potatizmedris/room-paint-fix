@@ -5,6 +5,7 @@ import { ImagePreview } from "@/components/ImagePreview";
 import { ProcessingOverlay } from "@/components/ProcessingOverlay";
 import { AuthDialog } from "@/components/AuthDialog";
 import { StartScreen } from "@/components/StartScreen";
+import { PathPicker, type UserPath } from "@/components/PathPicker";
 import { ProjectTypePicker, type ProjectType } from "@/components/ProjectTypePicker";
 import { useWallColorChanger } from "@/hooks/useWallColorChanger";
 import { useAuth } from "@/hooks/useAuth";
@@ -23,6 +24,7 @@ const Index = () => {
   const [selectedColor, setSelectedColor] = useState<ColorOption | null>(null);
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [hasEnteredStudio, setHasEnteredStudio] = useState(false);
+  const [selectedPath, setSelectedPath] = useState<UserPath | null>(null);
   const [selectedProjectType, setSelectedProjectType] = useState<ProjectType | null>(null);
   
   const { isProcessing, processedImage, changeWallColor, clearProcessedImage } = useWallColorChanger();
@@ -66,6 +68,10 @@ const Index = () => {
     setAuthDialogOpen(true);
   };
 
+  const handleSelectPath = (path: UserPath) => {
+    setSelectedPath(path);
+  };
+
   const handleSelectProjectType = (projectType: ProjectType) => {
     setSelectedProjectType(projectType);
   };
@@ -74,8 +80,13 @@ const Index = () => {
     setSelectedProjectType(null);
   };
 
+  const handleBackToPathPicker = () => {
+    setSelectedPath(null);
+  };
+
   const handleBackToStart = () => {
     setHasEnteredStudio(false);
+    setSelectedPath(null);
   };
 
   // Show start screen if not entered studio yet and not loading auth
@@ -100,12 +111,32 @@ const Index = () => {
     );
   }
 
-  // Show project type picker if entered but no project selected
-  if (!selectedProjectType) {
+  // Show path picker if entered but no path selected
+  if (!selectedPath) {
+    return (
+      <PathPicker
+        onSelectPath={handleSelectPath}
+        onBack={handleBackToStart}
+      />
+    );
+  }
+
+  // Show project type picker if inspiration path selected but no project type selected
+  if (selectedPath === "inspiration" && !selectedProjectType) {
     return (
       <ProjectTypePicker
         onSelectProject={handleSelectProjectType}
-        onBack={handleBackToStart}
+        onBack={handleBackToPathPicker}
+      />
+    );
+  }
+
+  // TODO: Handle direct-offer path - for now, show a placeholder or redirect to project picker
+  if (selectedPath === "direct-offer" && !selectedProjectType) {
+    return (
+      <ProjectTypePicker
+        onSelectProject={handleSelectProjectType}
+        onBack={handleBackToPathPicker}
       />
     );
   }
