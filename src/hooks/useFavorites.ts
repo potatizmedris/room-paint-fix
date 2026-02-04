@@ -49,7 +49,7 @@ export function useFavorites(userId: string | undefined) {
       return null;
     }
 
-    let photoUrl: string | null = null;
+    let storagePath: string | null = null;
 
     // Upload photo if provided
     if (photoBase64) {
@@ -71,10 +71,8 @@ export function useFavorites(userId: string | undefined) {
         console.error("Error uploading photo:", uploadError);
         toast.error("Failed to upload photo");
       } else {
-        const { data: urlData } = supabase.storage
-          .from("favorite-photos")
-          .getPublicUrl(fileName);
-        photoUrl = urlData.publicUrl;
+        // Store only the path, not a public URL - signed URLs will be generated on demand
+        storagePath = fileName;
       }
     }
 
@@ -84,7 +82,7 @@ export function useFavorites(userId: string | undefined) {
         user_id: userId,
         color_name: colorName,
         hex_value: hexValue,
-        photo_url: photoUrl,
+        photo_url: storagePath, // Store path only, not public URL
       })
       .select()
       .single();
@@ -103,10 +101,9 @@ export function useFavorites(userId: string | undefined) {
   const removeFavorite = async (id: string) => {
     const favorite = favorites.find((f) => f.id === id);
     
-    // Delete photo from storage if exists
+    // Delete photo from storage if exists (photo_url now stores the path directly)
     if (favorite?.photo_url && userId) {
-      const fileName = favorite.photo_url.split("/").slice(-2).join("/");
-      await supabase.storage.from("favorite-photos").remove([fileName]);
+      await supabase.storage.from("favorite-photos").remove([favorite.photo_url]);
     }
 
     const { error } = await supabase.from("favorites").delete().eq("id", id);
@@ -122,6 +119,19 @@ export function useFavorites(userId: string | undefined) {
     return true;
   };
 
+  // Generate a signed URL for a favorite photo (expires in 1 hour)
+  const getSignedPhotoUrl = useCallback(async (storagePath: string): Promise<string | null> => {
+    const { data, error } = await supabase.storage
+      .from("favorite-photos")
+      .createSignedUrl(storagePath, 3600); // 1 hour expiry
+
+    if (error) {
+      console.error("Error creating signed URL:", error);
+      return null;
+    }
+    return data.signedUrl;
+  }, []);
+
   const isFavorite = (hexValue: string) => {
     return favorites.some((f) => f.hex_value === hexValue);
   };
@@ -133,5 +143,6 @@ export function useFavorites(userId: string | undefined) {
     removeFavorite,
     isFavorite,
     refetch: fetchFavorites,
+    getSignedPhotoUrl,
   };
 }
