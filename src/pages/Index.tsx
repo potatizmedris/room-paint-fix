@@ -1,9 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
 import { ImageUploader } from "@/components/ImageUploader";
 import { ColorPicker, type ColorOption } from "@/components/ColorPicker";
 import { ImagePreview } from "@/components/ImagePreview";
 import { ProcessingOverlay } from "@/components/ProcessingOverlay";
 import { AuthDialog } from "@/components/AuthDialog";
+import { AccountSettings } from "@/components/AccountSettings";
 import { StartScreen } from "@/components/StartScreen";
 import { PathPicker, type UserPath } from "@/components/PathPicker";
 import { ProjectTypePicker, type ProjectType } from "@/components/ProjectTypePicker";
@@ -13,12 +15,13 @@ import { CraftsmenQuestionnaire } from "@/components/CraftsmenQuestionnaire";
 import { useWallColorChanger } from "@/hooks/useWallColorChanger";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
-import { Paintbrush, Sparkles, User, LogOut, Hammer } from "lucide-react";
+import { Paintbrush, Sparkles, User, LogOut, Hammer, Trash2, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -28,6 +31,7 @@ const Index = () => {
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<ColorOption | null>(null);
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  const [accountSettingsOpen, setAccountSettingsOpen] = useState(false);
   const [craftsmenDialogOpen, setCraftsmenDialogOpen] = useState(false);
   const [hasEnteredStudio, setHasEnteredStudio] = useState(false);
   const [selectedPath, setSelectedPath] = useState<UserPath | null>(null);
@@ -132,6 +136,13 @@ const Index = () => {
 
   const handleSignOut = async () => {
     await signOut();
+  };
+
+  const handleAccountDeleted = async () => {
+    await signOut();
+    setHasEnteredStudio(false);
+    setSelectedPath(null);
+    setSelectedProjectType(null);
   };
 
   const handleContinueAsGuest = () => {
@@ -243,6 +254,18 @@ const Index = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                  <DropdownMenuItem asChild>
+                    <Link to="/privacy" className="flex items-center">
+                      <Shield className="w-4 h-4 mr-2" />
+                      Privacy Policy
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => setAccountSettingsOpen(true)} className="text-destructive focus:text-destructive">
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete Account
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut}>
                     <LogOut className="w-4 h-4 mr-2" />
                     Sign out
@@ -380,15 +403,29 @@ const Index = () => {
 
       {/* Footer */}
       <footer className="border-t border-border mt-auto py-6">
-        <div className="container mx-auto px-4 text-center">
+        <div className="container mx-auto px-4 text-center space-y-2">
           <p className="text-sm text-muted-foreground">
             Powered by AI • Results may vary based on image quality and lighting • Pricing will not be based on image quality
           </p>
+          <Link to="/privacy" className="text-xs text-muted-foreground hover:text-foreground underline">
+            Privacy Policy
+          </Link>
         </div>
       </footer>
 
       {/* Auth Dialog */}
       <AuthDialog open={authDialogOpen} onOpenChange={setAuthDialogOpen} />
+      
+      {/* Account Settings Dialog */}
+      {user && (
+        <AccountSettings
+          open={accountSettingsOpen}
+          onOpenChange={setAccountSettingsOpen}
+          userId={user.id}
+          userEmail={user.email || ""}
+          onAccountDeleted={handleAccountDeleted}
+        />
+      )}
       
       {/* Craftsmen Questionnaire Dialog */}
       <CraftsmenQuestionnaire open={craftsmenDialogOpen} onOpenChange={setCraftsmenDialogOpen} />
