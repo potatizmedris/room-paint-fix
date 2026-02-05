@@ -12,6 +12,7 @@ import { ProjectTypePicker, type ProjectType } from "@/components/ProjectTypePic
 import { RoomGallery, type ProcessedRoom } from "@/components/RoomGallery";
 import { SurfaceTargetPicker, type SurfaceTarget } from "@/components/SurfaceTargetPicker";
 import { CraftsmenQuestionnaire } from "@/components/CraftsmenQuestionnaire";
+import { CraftsmenQuestionnairePage } from "@/components/CraftsmenQuestionnairePage";
 import { useWallColorChanger } from "@/hooks/useWallColorChanger";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
@@ -167,11 +168,20 @@ const Index = () => {
 
   const handleBackToPathPicker = () => {
     setSelectedPath(null);
+    setSelectedProjectType(null);
   };
 
   const handleBackToStart = () => {
     setHasEnteredStudio(false);
     setSelectedPath(null);
+    setSelectedProjectType(null);
+  };
+
+  const handleQuestionnaireComplete = () => {
+    // Reset to start after questionnaire completion
+    setHasEnteredStudio(false);
+    setSelectedPath(null);
+    setSelectedProjectType(null);
   };
 
   // Show start screen if not entered studio yet and not loading auth
@@ -216,12 +226,23 @@ const Index = () => {
     );
   }
 
-  // TODO: Handle direct-offer path - for now, show a placeholder or redirect to project picker
-  if (selectedPath === "direct-offer" && !selectedProjectType) {
+  // Show project type picker for direct-offer path
+  if (selectedPath === "direct-offer") {
+    if (!selectedProjectType) {
+      return (
+        <ProjectTypePicker
+          onSelectProject={handleSelectProjectType}
+          onBack={handleBackToPathPicker}
+        />
+      );
+    }
+    
+    // Show questionnaire page after project type is selected for direct-offer
     return (
-      <ProjectTypePicker
-        onSelectProject={handleSelectProjectType}
-        onBack={handleBackToPathPicker}
+      <CraftsmenQuestionnairePage
+        projectType={selectedProjectType}
+        onBack={handleBackToProjectPicker}
+        onComplete={handleQuestionnaireComplete}
       />
     );
   }
