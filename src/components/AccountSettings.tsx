@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { AlertTriangle, Loader2, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useEffect, useState as useStateReact } from "react";
 
 interface AccountSettingsProps {
   open: boolean;
@@ -32,10 +33,35 @@ export function AccountSettings({
   const [confirmEmail, setConfirmEmail] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [step, setStep] = useState<"info" | "confirm">("info");
+  const [dataStats, setDataStats] = useState<{ favoritesCount: number; photosCount: number }>({ 
+    favoritesCount: 0, 
+    photosCount: 0 
+  });
+  const [loadingStats, setLoadingStats] = useState(false);
+
+  useEffect(() => {
+    if (open && userId) {
+      setLoadingStats(true);
+      supabase
+        .from("favorites")
+        .select("id, photo_url")
+        .eq("user_id", userId)
+        .then(({ data }) => {
+          if (data) {
+            setDataStats({
+              favoritesCount: data.length,
+              photosCount: data.filter((f) => f.photo_url).length,
+            });
+          }
+          setLoadingStats(false);
+        });
+    }
+  }, [open, userId]);
 
   const handleClose = () => {
     setConfirmEmail("");
     setStep("info");
+    setDataStats({ favoritesCount: 0, photosCount: 0 });
     onOpenChange(false);
   };
 
@@ -48,31 +74,7 @@ export function AccountSettings({
     setIsDeleting(true);
 
     try {
-      // 1. Delete all photos from storage
-      const { data: favorites } = await supabase
-        .from("favorites")
-        .select("photo_url")
-        .eq("user_id", userId);
-
-      if (favorites && favorites.length > 0) {
-        const photoUrls = favorites
-          .filter((f) => f.photo_url)
-          .map((f) => {
-            const url = f.photo_url as string;
-            // Extract path from URL (userId/filename.jpg)
-            const parts = url.split("/");
-            return parts.slice(-2).join("/");
-          });
-
-        if (photoUrls.length > 0) {
-          await supabase.storage.from("favorite-photos").remove(photoUrls);
-        }
-      }
-
-      // 2. Delete all favorites (RLS will ensure only user's data is deleted)
-      await supabase.from("favorites").delete().eq("user_id", userId);
-
-      // 3. Delete the user account using the edge function
+      // Edge function handles all data cleanup (favorites, photos, then account)
       const { error: deleteError } = await supabase.functions.invoke("delete-user-account");
 
       if (deleteError) {
@@ -114,9 +116,12 @@ export function AccountSettings({
                   <p className="font-medium text-destructive">The following will be permanently deleted:</p>
                   <ul className="text-muted-foreground space-y-1">
                     <li>• Your account and login credentials</li>
-                    <li>• All saved favorite colors</li>
-                    <li>• All uploaded photos</li>
-                    <li>• Any other data associated with your account</li>
+                    <li>• All saved favorite colors {!loadingStats && dataStats.favoritesCount > 0 && (
+                      <span className="text-destructive font-medium">({dataStats.favoritesCount} saved)</span>
+                    )}</li>
+                    <li>• All uploaded photos {!loadingStats && dataStats.photosCount > 0 && (
+                      <span className="text-destructive font-medium">({dataStats.photosCount} photos)</span>
+                    )}</li>
                   </ul>
                 </div>
               </div>
