@@ -279,6 +279,13 @@ const Index = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem asChild>
+                    <Link to="/account" className="flex items-center">
+                      <User className="w-4 h-4 mr-2" />
+                      Your Account
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
                     <Link to="/privacy" className="flex items-center">
                       <Shield className="w-4 h-4 mr-2" />
                       Privacy Policy
