@@ -1,13 +1,14 @@
- import { useState } from "react";
- import { Button } from "@/components/ui/button";
- import { Input } from "@/components/ui/input";
- import { Label } from "@/components/ui/label";
- import { Textarea } from "@/components/ui/textarea";
- import { Card, CardContent } from "@/components/ui/card";
- import { Hammer, ArrowRight, CheckCircle2 } from "lucide-react";
- import { BackButton } from "@/components/BackButton";
- import { useToast } from "@/hooks/use-toast";
- import type { ProjectType } from "@/components/ProjectTypePicker";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
+import { Hammer, ArrowRight, CheckCircle2 } from "lucide-react";
+import { BackButton } from "@/components/BackButton";
+import { useToast } from "@/hooks/use-toast";
+import { RoomMeasurement, type RoomMeasurementData } from "@/components/RoomMeasurement";
+import type { ProjectType } from "@/components/ProjectTypePicker";
  
  interface CraftsmenQuestionnairePageProps {
    projectType: ProjectType;
@@ -35,41 +36,55 @@
    electrical: "Electrical",
  };
  
- export function CraftsmenQuestionnairePage({ projectType, onBack, onComplete }: CraftsmenQuestionnairePageProps) {
-   const { toast } = useToast();
-   const [isSubmitted, setIsSubmitted] = useState(false);
-   const [formData, setFormData] = useState<FormData>({
-     firstName: "",
-     lastName: "",
-     email: "",
-     phone: "",
-     address: "",
-     city: "",
-     postalCode: "",
-     projectDescription: "",
-   });
+export function CraftsmenQuestionnairePage({ projectType, onBack, onComplete }: CraftsmenQuestionnairePageProps) {
+  const { toast } = useToast();
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [formData, setFormData] = useState<FormData>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    postalCode: "",
+    projectDescription: "",
+  });
+  const [roomMeasurement, setRoomMeasurement] = useState<RoomMeasurementData>({
+    sections: [{ id: "initial", label: "Section 1", length: "", width: "" }],
+    totalSquareMeters: 0,
+    floorPhoto: null,
+  });
  
    const handleInputChange = (field: keyof FormData, value: string) => {
      setFormData((prev) => ({ ...prev, [field]: value }));
    };
  
-   const handleSubmit = (e: React.FormEvent) => {
-     e.preventDefault();
-     
-     // Basic validation
-     if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone) {
-       toast({
-         title: "Missing information",
-         description: "Please fill in all required fields.",
-         variant: "destructive",
-       });
-       return;
-     }
- 
-     // TODO: Submit form data to backend
-     console.log("Form submitted:", { ...formData, projectType });
-     setIsSubmitted(true);
-   };
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Basic validation
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone) {
+      toast({
+        title: "Missing information",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (projectType === "painting" && roomMeasurement.totalSquareMeters <= 0) {
+      toast({
+        title: "Room measurements required",
+        description: "Please enter room dimensions so the craftsman can prepare an accurate quote.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // TODO: Submit form data to backend
+    console.log("Form submitted:", { ...formData, projectType, roomMeasurement });
+    setIsSubmitted(true);
+  };
  
    if (isSubmitted) {
      return (
@@ -200,19 +215,26 @@
                        placeholder="123 45"
                      />
                    </div>
-                 </div>
- 
-                 {/* Project description */}
-                 <div className="space-y-2">
-                   <Label htmlFor="projectDescription">Project Description</Label>
-                   <Textarea
-                     id="projectDescription"
-                     value={formData.projectDescription}
-                     onChange={(e) => handleInputChange("projectDescription", e.target.value)}
-                     placeholder="Tell us about your project..."
-                     rows={4}
-                   />
-                 </div>
+                </div>
+
+                  {/* Room Measurement — shown for painting projects */}
+                  {projectType === "painting" && (
+                    <div className="border-t border-border pt-4">
+                      <RoomMeasurement data={roomMeasurement} onChange={setRoomMeasurement} />
+                    </div>
+                  )}
+
+                  {/* Project description */}
+                  <div className="space-y-2">
+                    <Label htmlFor="projectDescription">Project Description</Label>
+                    <Textarea
+                      id="projectDescription"
+                      value={formData.projectDescription}
+                      onChange={(e) => handleInputChange("projectDescription", e.target.value)}
+                      placeholder="Tell us about your project..."
+                      rows={4}
+                    />
+                  </div>
  
                  <div className="pt-4">
                    <Button type="submit" className="w-full gap-2">
