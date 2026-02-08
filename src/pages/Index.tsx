@@ -16,7 +16,7 @@ import { CraftsmenQuestionnairePage } from "@/components/CraftsmenQuestionnaireP
 import { useWallColorChanger } from "@/hooks/useWallColorChanger";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
-import { Paintbrush, Sparkles, User, LogOut, Hammer, Trash2, Shield } from "lucide-react";
+import { Paintbrush, Sparkles, User, LogOut, Hammer, Trash2, Shield, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -257,6 +257,9 @@ const Index = () => {
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" onClick={handleBackToPathPicker} className="shrink-0">
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
               <Paintbrush className="w-5 h-5 text-primary-foreground" />
             </div>
