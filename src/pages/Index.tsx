@@ -98,10 +98,6 @@ const Index = () => {
 
   const handleColorSelect = (color: ColorOption) => {
     setSelectedColor(color);
-    if (!user) {
-      setAuthDialogOpen(true);
-      return;
-    }
     if (originalImage) {
       changeWallColor(originalImage, color, surfaceTarget);
     }
