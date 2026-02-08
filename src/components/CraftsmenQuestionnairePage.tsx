@@ -4,7 +4,8 @@
  import { Label } from "@/components/ui/label";
  import { Textarea } from "@/components/ui/textarea";
  import { Card, CardContent } from "@/components/ui/card";
- import { Hammer, ArrowRight, ArrowLeft, CheckCircle2 } from "lucide-react";
+ import { Hammer, ArrowRight, CheckCircle2 } from "lucide-react";
+ import { BackButton } from "@/components/BackButton";
  import { useToast } from "@/hooks/use-toast";
  import type { ProjectType } from "@/components/ProjectTypePicker";
  
@@ -99,17 +100,9 @@
      <div className="min-h-screen bg-background flex flex-col">
        {/* Header */}
        <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-         <div className="container mx-auto px-4 py-4">
-           <Button 
-             variant="ghost" 
-             size="sm" 
-             onClick={onBack}
-             className="gap-2"
-           >
-             <ArrowLeft className="w-4 h-4" />
-             Back
-           </Button>
-         </div>
+        <div className="container mx-auto px-4 py-4">
+          <BackButton onClick={onBack} />
+        </div>
        </header>
  
        {/* Content */}
