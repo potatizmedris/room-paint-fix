@@ -1,6 +1,6 @@
 import { UserPlus, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import processLogo from "@/assets/process-logo.png";
+import heroImage from "@/assets/hero-image.png";
 
 interface StartScreenProps {
   onContinueAsGuest: () => void;
@@ -9,14 +9,14 @@ interface StartScreenProps {
 
 export function StartScreen({ onContinueAsGuest, onCreateAccount }: StartScreenProps) {
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 py-10">
       <div className="max-w-md w-full text-center animate-fade-in">
-        {/* Logo */}
-        <div className="mx-auto mb-6">
-          <img 
-            src={processLogo} 
-            alt="Wall Color Studio Process" 
-            className="w-48 h-auto mx-auto"
+        {/* Hero Image */}
+        <div className="mx-auto mb-8 rounded-2xl overflow-hidden shadow-lg">
+          <img
+            src={heroImage}
+            alt="Before and after wall color transformation"
+            className="w-full h-auto object-cover"
           />
         </div>
 
