@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Hammer, ArrowRight, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { RoomMeasurement, type RoomMeasurementData } from "@/components/RoomMeasurement";
 
 interface CraftsmenQuestionnaireProps {
   open: boolean;
@@ -42,6 +43,11 @@ export function CraftsmenQuestionnaire({ open, onOpenChange }: CraftsmenQuestion
     postalCode: "",
     projectDescription: "",
   });
+  const [roomMeasurement, setRoomMeasurement] = useState<RoomMeasurementData>({
+    sections: [{ id: "initial", label: "Section 1", length: "", width: "" }],
+    totalSquareMeters: 0,
+    floorPhoto: null,
+  });
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -60,8 +66,17 @@ export function CraftsmenQuestionnaire({ open, onOpenChange }: CraftsmenQuestion
       return;
     }
 
+    if (roomMeasurement.totalSquareMeters <= 0) {
+      toast({
+        title: "Room measurements required",
+        description: "Please enter room dimensions so the craftsman can prepare an accurate quote.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // TODO: Submit form data to backend
-    console.log("Form submitted:", formData);
+    console.log("Form submitted:", { ...formData, roomMeasurement });
     setIsSubmitted(true);
   };
 
@@ -79,6 +94,11 @@ export function CraftsmenQuestionnaire({ open, onOpenChange }: CraftsmenQuestion
         city: "",
         postalCode: "",
         projectDescription: "",
+      });
+      setRoomMeasurement({
+        sections: [{ id: "initial", label: "Section 1", length: "", width: "" }],
+        totalSquareMeters: 0,
+        floorPhoto: null,
       });
     }, 300);
   };
@@ -191,6 +211,11 @@ export function CraftsmenQuestionnaire({ open, onOpenChange }: CraftsmenQuestion
                     placeholder="123 45"
                   />
                 </div>
+              </div>
+
+              {/* Room Measurement */}
+              <div className="border-t border-border pt-4">
+                <RoomMeasurement data={roomMeasurement} onChange={setRoomMeasurement} />
               </div>
 
               {/* Project description */}
