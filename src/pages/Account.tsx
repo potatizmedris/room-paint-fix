@@ -5,7 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, Save, Loader2 } from "lucide-react";
+import { Save, Loader2 } from "lucide-react";
+import { BackButton } from "@/components/BackButton";
 import { useToast } from "@/hooks/use-toast";
 
 const Account = () => {
@@ -82,9 +83,7 @@ const Account = () => {
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="shrink-0">
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
+          <BackButton onClick={() => navigate(-1)} />
           <h1 className="font-serif text-xl font-semibold text-foreground">Your Account</h1>
         </div>
       </header>
