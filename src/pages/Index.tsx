@@ -5,7 +5,6 @@ import { ColorPicker, type ColorOption } from "@/components/ColorPicker";
 import { ImagePreview } from "@/components/ImagePreview";
 import { ProcessingOverlay } from "@/components/ProcessingOverlay";
 import { AuthDialog } from "@/components/AuthDialog";
-import { AccountSettings } from "@/components/AccountSettings";
 import { StartScreen } from "@/components/StartScreen";
 import { PathPicker, type UserPath } from "@/components/PathPicker";
 import { ProjectTypePicker, type ProjectType } from "@/components/ProjectTypePicker";
@@ -13,19 +12,13 @@ import { RoomGallery, type ProcessedRoom } from "@/components/RoomGallery";
 import { SurfaceTargetPicker, type SurfaceTarget } from "@/components/SurfaceTargetPicker";
 import { CraftsmenQuestionnaire } from "@/components/CraftsmenQuestionnaire";
 import { CraftsmenQuestionnairePage } from "@/components/CraftsmenQuestionnairePage";
+import { UserMenu } from "@/components/UserMenu";
 import { useWallColorChanger } from "@/hooks/useWallColorChanger";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
-import { Paintbrush, Sparkles, User, LogOut, Hammer, Trash2, Shield } from "lucide-react";
+import { Paintbrush, Sparkles, Hammer } from "lucide-react";
 import { BackButton } from "@/components/BackButton";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 const generateRoomId = () => `room-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
@@ -33,7 +26,7 @@ const Index = () => {
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<ColorOption | null>(null);
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
-  const [accountSettingsOpen, setAccountSettingsOpen] = useState(false);
+  
   const [craftsmenDialogOpen, setCraftsmenDialogOpen] = useState(false);
   const [hasEnteredStudio, setHasEnteredStudio] = useState(false);
   const [selectedPath, setSelectedPath] = useState<UserPath | null>(null);
@@ -136,16 +129,7 @@ const Index = () => {
     clearProcessedImage();
   };
 
-  const handleSignOut = async () => {
-    await signOut();
-  };
 
-  const handleAccountDeleted = async () => {
-    await signOut();
-    setHasEnteredStudio(false);
-    setSelectedPath(null);
-    setSelectedProjectType(null);
-  };
 
   const handleContinueAsGuest = () => {
     setHasEnteredStudio(true);
@@ -261,47 +245,7 @@ const Index = () => {
 
           {/* Auth Section */}
           <div>
-            {authLoading ? (
-              <div className="w-8 h-8 rounded-full bg-secondary animate-pulse" />
-            ) : user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="gap-2">
-                    <User className="w-4 h-4" />
-                    <span className="hidden sm:inline">{user.email?.split("@")[0]}</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem asChild>
-                    <Link to="/account" className="flex items-center">
-                      <User className="w-4 h-4 mr-2" />
-                      Your Account
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link to="/privacy" className="flex items-center">
-                      <Shield className="w-4 h-4 mr-2" />
-                      Privacy Policy
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => setAccountSettingsOpen(true)} className="text-destructive focus:text-destructive">
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Delete Account
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut}>
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Sign out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <Button variant="outline" size="sm" onClick={() => setAuthDialogOpen(true)}>
-                Sign in
-              </Button>
-            )}
+            <UserMenu />
           </div>
         </div>
       </header>
@@ -440,17 +384,6 @@ const Index = () => {
 
       {/* Auth Dialog */}
       <AuthDialog open={authDialogOpen} onOpenChange={setAuthDialogOpen} />
-      
-      {/* Account Settings Dialog */}
-      {user && (
-        <AccountSettings
-          open={accountSettingsOpen}
-          onOpenChange={setAccountSettingsOpen}
-          userId={user.id}
-          userEmail={user.email || ""}
-          onAccountDeleted={handleAccountDeleted}
-        />
-      )}
       
       {/* Craftsmen Questionnaire Dialog */}
       <CraftsmenQuestionnaire open={craftsmenDialogOpen} onOpenChange={setCraftsmenDialogOpen} />

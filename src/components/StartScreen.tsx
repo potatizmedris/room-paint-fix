@@ -1,5 +1,6 @@
 import { UserPlus, ArrowRight, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { UserMenu } from "@/components/UserMenu";
 import heroImage from "@/assets/hero-image.png";
 
 interface StartScreenProps {
@@ -10,7 +11,12 @@ interface StartScreenProps {
 
 export function StartScreen({ onContinueAsGuest, onCreateAccount, onLogin }: StartScreenProps) {
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 py-10">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 py-10 relative">
+      {/* Account menu in upper right */}
+      <div className="absolute top-4 right-4 z-10">
+        <UserMenu />
+      </div>
+
       <div className="max-w-md w-full text-center animate-fade-in">
         {/* Hero Image */}
         <div className="mx-auto mb-8 rounded-2xl overflow-hidden shadow-lg">
