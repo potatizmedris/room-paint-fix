@@ -1,5 +1,6 @@
 import { Paintbrush, Wrench, HardHat, Grid3X3, Hammer, Lightbulb, Lock } from "lucide-react";
 import { BackButton } from "@/components/BackButton";
+import { UserMenu } from "@/components/UserMenu";
 import { Card, CardContent } from "@/components/ui/card";
 
 export type ProjectType = 
@@ -73,8 +74,9 @@ export function ProjectTypePicker({ onSelectProject, onBack }: ProjectTypePicker
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <BackButton onClick={onBack} />
+          <UserMenu />
         </div>
       </header>
 
