@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Save, Loader2 } from "lucide-react";
 import { BackButton } from "@/components/BackButton";
+import { UserMenu } from "@/components/UserMenu";
 import { useToast } from "@/hooks/use-toast";
 
 const Account = () => {
@@ -82,9 +83,12 @@ const Account = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex items-center gap-3">
-          <BackButton onClick={() => navigate(-1)} />
-          <h1 className="font-serif text-xl font-semibold text-foreground">Your Account</h1>
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <BackButton onClick={() => navigate(-1)} />
+            <h1 className="font-serif text-xl font-semibold text-foreground">Your Account</h1>
+          </div>
+          <UserMenu />
         </div>
       </header>
 

@@ -1,0 +1,84 @@
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { AccountSettings } from "@/components/AccountSettings";
+import { AuthDialog } from "@/components/AuthDialog";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { User, LogOut, Trash2, Shield } from "lucide-react";
+
+export function UserMenu() {
+  const { user, loading: authLoading, signOut } = useAuth();
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  const [accountSettingsOpen, setAccountSettingsOpen] = useState(false);
+
+  if (authLoading) {
+    return <div className="w-8 h-8 rounded-full bg-secondary animate-pulse" />;
+  }
+
+  if (!user) {
+    return (
+      <>
+        <Button variant="outline" size="sm" onClick={() => setAuthDialogOpen(true)}>
+          Sign in
+        </Button>
+        <AuthDialog open={authDialogOpen} onOpenChange={setAuthDialogOpen} />
+      </>
+    );
+  }
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="sm" className="gap-2">
+            <User className="w-4 h-4" />
+            <span className="hidden sm:inline">{user.email?.split("@")[0]}</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem asChild>
+            <Link to="/account" className="flex items-center">
+              <User className="w-4 h-4 mr-2" />
+              Your Account
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link to="/privacy" className="flex items-center">
+              <Shield className="w-4 h-4 mr-2" />
+              Privacy Policy
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={() => setAccountSettingsOpen(true)}
+            className="text-destructive focus:text-destructive"
+          >
+            <Trash2 className="w-4 h-4 mr-2" />
+            Delete Account
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => signOut()}>
+            <LogOut className="w-4 h-4 mr-2" />
+            Sign out
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <AccountSettings
+        open={accountSettingsOpen}
+        onOpenChange={setAccountSettingsOpen}
+        userId={user.id}
+        userEmail={user.email || ""}
+        onAccountDeleted={() => signOut()}
+      />
+    </>
+  );
+}
