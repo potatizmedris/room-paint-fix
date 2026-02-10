@@ -245,7 +245,7 @@ export function ColorPicker({
                     expandedPreset === color.name ? "rotate-180 text-primary-foreground" : "text-muted-foreground"
                   )} />
                 </button>
-                <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                <span className="absolute -top-8 left-1/2 -translate-x-1/2 text-xs text-muted-foreground bg-popover border border-border rounded px-1.5 py-0.5 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10 shadow-sm">
                   {color.name}
                 </span>
               </div>
