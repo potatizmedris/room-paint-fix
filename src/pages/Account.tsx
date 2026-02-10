@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Save, Loader2, Trash2 } from "lucide-react";
 import { BackButton } from "@/components/BackButton";
 import { UserMenu } from "@/components/UserMenu";
@@ -22,6 +23,46 @@ const Account = () => {
   const [updatingEmail, setUpdatingEmail] = useState(false);
   const [updatingPassword, setUpdatingPassword] = useState(false);
   const [accountSettingsOpen, setAccountSettingsOpen] = useState(false);
+
+  // Profile fields
+  const [address, setAddress] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [gender, setGender] = useState("");
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [profileLoaded, setProfileLoaded] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchProfile = async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("address, phone_number, gender")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (data) {
+        setAddress(data.address || "");
+        setPhoneNumber(data.phone_number || "");
+        setGender(data.gender || "");
+      }
+      setProfileLoaded(true);
+    };
+    fetchProfile();
+  }, [user]);
+
+  const handleSaveProfile = async () => {
+    if (!user) return;
+    setSavingProfile(true);
+    const profileData = { address, phone_number: phoneNumber, gender, user_id: user.id, updated_at: new Date().toISOString() };
+    const { error } = await supabase
+      .from("profiles")
+      .upsert(profileData, { onConflict: "user_id" });
+    setSavingProfile(false);
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Saved", description: "Your information has been updated." });
+    }
+  };
 
   if (authLoading) {
     return (
@@ -95,12 +136,48 @@ const Account = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8 max-w-lg space-y-8">
-        {/* Current info */}
-        <section className="glass-card rounded-2xl p-6 space-y-2">
-          <h2 className="font-medium text-foreground">Account Info</h2>
-          <p className="text-sm text-muted-foreground">
-            Signed in as <span className="font-medium text-foreground">{user.email}</span>
-          </p>
+        {/* Your Information */}
+        <section className="glass-card rounded-2xl p-6 space-y-4">
+          <h2 className="font-medium text-foreground">Your Information</h2>
+          <div className="space-y-2">
+            <Label>Email</Label>
+            <Input value={user.email || ""} disabled className="opacity-70" />
+            <p className="text-xs text-muted-foreground">Use the section below to change your email.</p>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="address">Address</Label>
+            <Input
+              id="address"
+              placeholder="Your address"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="phone">Phone Number</Label>
+            <Input
+              id="phone"
+              type="tel"
+              placeholder="+46 70 123 4567"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Gender</Label>
+            <RadioGroup value={gender} onValueChange={setGender} className="flex flex-wrap gap-4 pt-1">
+              {["Male", "Female", "Other", "Prefer not to say"].map((opt) => (
+                <div key={opt} className="flex items-center gap-2">
+                  <RadioGroupItem value={opt} id={`gender-${opt}`} />
+                  <Label htmlFor={`gender-${opt}`} className="font-normal cursor-pointer">{opt}</Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+          <Button onClick={handleSaveProfile} disabled={savingProfile || !profileLoaded} className="gap-2">
+            {savingProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            Save
+          </Button>
         </section>
 
         {/* Change email */}
