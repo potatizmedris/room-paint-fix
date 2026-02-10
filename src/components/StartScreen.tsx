@@ -1,13 +1,14 @@
-import { UserPlus, ArrowRight } from "lucide-react";
+import { UserPlus, ArrowRight, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-image.png";
 
 interface StartScreenProps {
   onContinueAsGuest: () => void;
   onCreateAccount: () => void;
+  onLogin?: () => void;
 }
 
-export function StartScreen({ onContinueAsGuest, onCreateAccount }: StartScreenProps) {
+export function StartScreen({ onContinueAsGuest, onCreateAccount, onLogin }: StartScreenProps) {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 py-10">
       <div className="max-w-md w-full text-center animate-fade-in">
@@ -31,6 +32,16 @@ export function StartScreen({ onContinueAsGuest, onCreateAccount }: StartScreenP
         {/* Action Buttons */}
         <div className="space-y-4">
           <Button
+            size="lg"
+            className="w-full gap-2"
+            onClick={onLogin}
+          >
+            <LogIn className="w-5 h-5" />
+            Log In
+          </Button>
+
+          <Button
+            variant="secondary"
             size="lg"
             className="w-full gap-2"
             onClick={onCreateAccount}

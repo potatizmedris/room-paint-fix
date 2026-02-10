@@ -192,6 +192,7 @@ const Index = () => {
         <StartScreen
           onContinueAsGuest={handleContinueAsGuest}
           onCreateAccount={handleCreateAccount}
+          onLogin={handleCreateAccount}
         />
         <AuthDialog 
           open={authDialogOpen} 
