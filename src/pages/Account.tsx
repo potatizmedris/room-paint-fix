@@ -162,7 +162,7 @@ const Account = () => {
 
         {/* Delete Account */}
         <section className="glass-card rounded-2xl p-6">
-          <h2 className="font-medium text-destructive mb-2">Danger Zone</h2>
+          <h2 className="font-medium text-destructive mb-2">Delete Account</h2>
           <p className="text-sm text-muted-foreground mb-4">
             Permanently delete your account and all associated data. This action cannot be undone.
           </p>
