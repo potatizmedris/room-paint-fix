@@ -5,14 +5,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Save, Loader2 } from "lucide-react";
+import { Save, Loader2, Trash2 } from "lucide-react";
 import { BackButton } from "@/components/BackButton";
 import { UserMenu } from "@/components/UserMenu";
+import { AccountSettings } from "@/components/AccountSettings";
 import { useToast } from "@/hooks/use-toast";
 
 const Account = () => {
   const navigate = useNavigate();
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, signOut } = useAuth();
   const { toast } = useToast();
 
   const [newEmail, setNewEmail] = useState("");
@@ -20,6 +21,7 @@ const Account = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [updatingEmail, setUpdatingEmail] = useState(false);
   const [updatingPassword, setUpdatingPassword] = useState(false);
+  const [accountSettingsOpen, setAccountSettingsOpen] = useState(false);
 
   if (authLoading) {
     return (
@@ -157,7 +159,34 @@ const Account = () => {
             </Button>
           </form>
         </section>
+
+        {/* Delete Account */}
+        <section className="glass-card rounded-2xl p-6">
+          <h2 className="font-medium text-destructive mb-2">Danger Zone</h2>
+          <p className="text-sm text-muted-foreground mb-4">
+            Permanently delete your account and all associated data. This action cannot be undone.
+          </p>
+          <Button
+            variant="destructive"
+            className="gap-2"
+            onClick={() => setAccountSettingsOpen(true)}
+          >
+            <Trash2 className="w-4 h-4" />
+            Delete Account
+          </Button>
+        </section>
       </main>
+
+      <AccountSettings
+        open={accountSettingsOpen}
+        onOpenChange={setAccountSettingsOpen}
+        userId={user.id}
+        userEmail={user.email || ""}
+        onAccountDeleted={async () => {
+          await signOut();
+          navigate("/");
+        }}
+      />
     </div>
   );
 };
