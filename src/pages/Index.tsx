@@ -196,13 +196,7 @@ const Index = () => {
         />
         <AuthDialog 
           open={authDialogOpen} 
-          onOpenChange={(open) => {
-            setAuthDialogOpen(open);
-            // If dialog closes and user is now authenticated, enter studio
-            if (!open && user) {
-              setHasEnteredStudio(true);
-            }
-          }} 
+          onOpenChange={setAuthDialogOpen} 
         />
       </>
     );
