@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthDialog } from "@/components/AuthDialog";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import { User, LogOut, Shield } from "lucide-react";
 export function UserMenu() {
   const { user, loading: authLoading, signOut } = useAuth();
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  const navigate = useNavigate();
 
   if (authLoading) {
     return <div className="w-8 h-8 rounded-full bg-secondary animate-pulse" />;
@@ -54,7 +55,7 @@ export function UserMenu() {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => signOut()}>
+        <DropdownMenuItem onClick={async () => { await signOut(); navigate("/"); }}>
           <LogOut className="w-4 h-4 mr-2" />
           Sign out
         </DropdownMenuItem>
