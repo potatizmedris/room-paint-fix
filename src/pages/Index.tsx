@@ -13,6 +13,7 @@ import { SurfaceTargetPicker, type SurfaceTarget } from "@/components/SurfaceTar
 import { CraftsmenQuestionnaire } from "@/components/CraftsmenQuestionnaire";
 import { CraftsmenQuestionnairePage } from "@/components/CraftsmenQuestionnairePage";
 import { UserMenu } from "@/components/UserMenu";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { useWallColorChanger } from "@/hooks/useWallColorChanger";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
@@ -244,7 +245,8 @@ const Index = () => {
           </div>
 
           {/* Auth Section */}
-          <div>
+          <div className="flex items-center gap-1">
+            <ThemeToggle />
             <UserMenu />
           </div>
         </div>
