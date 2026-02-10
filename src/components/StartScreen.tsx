@@ -23,7 +23,7 @@ export function StartScreen({ onContinueAsGuest, onCreateAccount, onLogin }: Sta
 
         {/* Title */}
         <h1 className="font-serif text-4xl font-semibold text-foreground mb-3">
-          SnapNFix
+          HemFix
         </h1>
         <p className="text-muted-foreground mb-10">
           Visualize your perfect home with AI-powered room transformation and realize your project directly by choosing from well-trusted craftsmen
