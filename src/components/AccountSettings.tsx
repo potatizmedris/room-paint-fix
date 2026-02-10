@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,7 +13,6 @@ import { Label } from "@/components/ui/label";
 import { AlertTriangle, Loader2, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useEffect, useState as useStateReact } from "react";
 
 interface AccountSettingsProps {
   open: boolean;
@@ -23,6 +22,9 @@ interface AccountSettingsProps {
   onAccountDeleted: () => void;
 }
 
+const COUNTDOWN_SECONDS = 10;
+const CONFIRM_PHRASE = "DELETE";
+
 export function AccountSettings({
   open,
   onOpenChange,
@@ -30,14 +32,16 @@ export function AccountSettings({
   userEmail,
   onAccountDeleted,
 }: AccountSettingsProps) {
-  const [confirmEmail, setConfirmEmail] = useState("");
+  const [confirmText, setConfirmText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
-  const [step, setStep] = useState<"info" | "confirm">("info");
-  const [dataStats, setDataStats] = useState<{ favoritesCount: number; photosCount: number }>({ 
-    favoritesCount: 0, 
-    photosCount: 0 
+  const [step, setStep] = useState<"info" | "countdown" | "confirm">("info");
+  const [dataStats, setDataStats] = useState<{ favoritesCount: number; photosCount: number }>({
+    favoritesCount: 0,
+    photosCount: 0,
   });
   const [loadingStats, setLoadingStats] = useState(false);
+  const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (open && userId) {
@@ -58,23 +62,43 @@ export function AccountSettings({
     }
   }, [open, userId]);
 
+  useEffect(() => {
+    if (step === "countdown") {
+      setCountdown(COUNTDOWN_SECONDS);
+      timerRef.current = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            if (timerRef.current) clearInterval(timerRef.current);
+            setStep("confirm");
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [step]);
+
   const handleClose = () => {
-    setConfirmEmail("");
+    setConfirmText("");
     setStep("info");
+    setCountdown(COUNTDOWN_SECONDS);
+    if (timerRef.current) clearInterval(timerRef.current);
     setDataStats({ favoritesCount: 0, photosCount: 0 });
     onOpenChange(false);
   };
 
   const handleDeleteAccount = async () => {
-    if (confirmEmail !== userEmail) {
-      toast.error("Email does not match");
+    if (confirmText !== CONFIRM_PHRASE) {
+      toast.error("Confirmation text does not match");
       return;
     }
 
     setIsDeleting(true);
 
     try {
-      // Edge function handles all data cleanup (favorites, photos, then account)
       const { error: deleteError } = await supabase.functions.invoke("delete-user-account");
 
       if (deleteError) {
@@ -103,7 +127,9 @@ export function AccountSettings({
           <DialogDescription>
             {step === "info"
               ? "This action cannot be undone. All your data will be permanently deleted."
-              : "Please confirm by typing your email address."}
+              : step === "countdown"
+              ? "Please wait before proceeding..."
+              : "Please confirm by typing DELETE."}
           </DialogDescription>
         </DialogHeader>
 
@@ -131,35 +157,49 @@ export function AccountSettings({
               <Button variant="outline" onClick={handleClose}>
                 Cancel
               </Button>
-              <Button variant="destructive" onClick={() => setStep("confirm")}>
+              <Button variant="destructive" onClick={() => setStep("countdown")}>
                 Continue
+              </Button>
+            </DialogFooter>
+          </div>
+        ) : step === "countdown" ? (
+          <div className="space-y-4">
+            <div className="text-center py-6">
+              <p className="text-sm text-muted-foreground mb-3">Are you really sure? Please wait before proceeding.</p>
+              <div className="text-4xl font-bold text-destructive tabular-nums">{countdown}</div>
+              <p className="text-xs text-muted-foreground mt-2">seconds remaining</p>
+            </div>
+            <DialogFooter className="flex gap-2 sm:gap-0">
+              <Button variant="outline" onClick={handleClose}>
+                Cancel
               </Button>
             </DialogFooter>
           </div>
         ) : (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="confirm-email">
-                Type <span className="font-mono text-foreground">{userEmail}</span> to confirm
+              <Label htmlFor="confirm-text">
+                Type <span className="font-mono text-destructive font-bold">{CONFIRM_PHRASE}</span> to confirm deletion
               </Label>
               <Input
-                id="confirm-email"
-                type="email"
-                value={confirmEmail}
-                onChange={(e) => setConfirmEmail(e.target.value)}
-                placeholder="Enter your email"
+                id="confirm-text"
+                type="text"
+                value={confirmText}
+                onChange={(e) => setConfirmText(e.target.value)}
+                placeholder={`Type ${CONFIRM_PHRASE} here`}
                 disabled={isDeleting}
+                autoComplete="off"
               />
             </div>
 
             <DialogFooter className="flex gap-2 sm:gap-0">
-              <Button variant="outline" onClick={() => setStep("info")} disabled={isDeleting}>
-                Back
+              <Button variant="outline" onClick={handleClose} disabled={isDeleting}>
+                Cancel
               </Button>
               <Button
                 variant="destructive"
                 onClick={handleDeleteAccount}
-                disabled={confirmEmail !== userEmail || isDeleting}
+                disabled={confirmText !== CONFIRM_PHRASE || isDeleting}
               >
                 {isDeleting ? (
                   <>
