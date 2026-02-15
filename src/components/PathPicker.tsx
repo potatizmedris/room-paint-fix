@@ -1,32 +1,11 @@
 import { FileText, Sparkles } from "lucide-react";
 import { BackButton } from "@/components/BackButton";
 import { UserMenu } from "@/components/UserMenu";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export type UserPath = "direct-offer" | "inspiration";
-
-interface PathOption {
-  id: UserPath;
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-}
-
-const pathOptions: PathOption[] = [
-  {
-    id: "direct-offer",
-    title: "Get an Offer Directly",
-    description: "I already know what I need fixed",
-    icon: <FileText className="w-8 h-8" />,
-  },
-  {
-    id: "inspiration",
-    title: "Get Inspiration",
-    description: "Explore options with our AI tool",
-    icon: <Sparkles className="w-8 h-8" />,
-  },
-];
 
 interface PathPickerProps {
   onSelectPath: (path: UserPath) => void;
@@ -34,29 +13,46 @@ interface PathPickerProps {
 }
 
 export function PathPicker({ onSelectPath, onBack }: PathPickerProps) {
+  const { t } = useLanguage();
+
+  const pathOptions = [
+    {
+      id: "direct-offer" as UserPath,
+      title: t("path.directOffer"),
+      description: t("path.directOfferDesc"),
+      icon: <FileText className="w-8 h-8" />,
+    },
+    {
+      id: "inspiration" as UserPath,
+      title: t("path.inspiration"),
+      description: t("path.inspirationDesc"),
+      icon: <Sparkles className="w-8 h-8" />,
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <BackButton onClick={onBack} />
-          <UserMenu />
+          <div className="flex items-center gap-1">
+            <LanguageSwitcher />
+            <UserMenu />
+          </div>
         </div>
       </header>
 
-      {/* Content */}
       <main className="flex-1 container mx-auto px-4 py-12 flex items-center justify-center">
         <div className="max-w-2xl w-full animate-fade-in">
           <div className="text-center mb-12">
             <h1 className="font-serif text-4xl font-semibold text-foreground mb-3">
-              How can we help you?
+              {t("path.title")}
             </h1>
             <p className="text-muted-foreground max-w-md mx-auto">
-              Choose how you'd like to proceed with your project
+              {t("path.subtitle")}
             </p>
           </div>
 
-          {/* Path Options */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {pathOptions.map((option) => (
               <Card 

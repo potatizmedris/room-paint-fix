@@ -14,9 +14,11 @@ import { CraftsmenQuestionnaire } from "@/components/CraftsmenQuestionnaire";
 import { CraftsmenQuestionnairePage } from "@/components/CraftsmenQuestionnairePage";
 import { UserMenu } from "@/components/UserMenu";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useWallColorChanger } from "@/hooks/useWallColorChanger";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
+import { useLanguage } from "@/i18n/LanguageContext";
 import { Paintbrush, Sparkles, Hammer } from "lucide-react";
 import { BackButton } from "@/components/BackButton";
 import { Button } from "@/components/ui/button";
@@ -43,7 +45,7 @@ const Index = () => {
   const { isProcessing, processedImage, changeWallColor, clearProcessedImage } = useWallColorChanger();
   const { user, loading: authLoading, signOut } = useAuth();
   const { favorites, loading: favoritesLoading, addFavorite, removeFavorite, isFavorite } = useFavorites(user?.id);
-
+  const { t } = useLanguage();
   // Skip start screen if user is already authenticated
   useEffect(() => {
     if (user && !authLoading) {
@@ -239,13 +241,14 @@ const Index = () => {
               <Paintbrush className="w-5 h-5 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="font-serif text-xl font-semibold text-foreground">Wall Color Studio</h1>
-              <p className="text-xs text-muted-foreground">Visualize your perfect wall color</p>
+              <h1 className="font-serif text-xl font-semibold text-foreground">{t("studio.title")}</h1>
+              <p className="text-xs text-muted-foreground">{t("studio.subtitle")}</p>
             </div>
           </div>
 
           {/* Auth Section */}
           <div className="flex items-center gap-1">
+            <LanguageSwitcher />
             <ThemeToggle />
             <UserMenu />
           </div>
@@ -259,10 +262,10 @@ const Index = () => {
             <div className="animate-fade-in">
               <div className="text-center mb-8">
                 <h2 className="font-serif text-3xl font-semibold text-foreground mb-3">
-                  Transform Your Walls
+                  {t("studio.transformTitle")}
                 </h2>
                 <p className="text-muted-foreground max-w-md mx-auto">
-                  Take a photo of any wall and instantly see how different colors would look in your space
+                  {t("studio.transformSubtitle")}
                 </p>
               </div>
 
@@ -276,18 +279,18 @@ const Index = () => {
                   <div className="w-12 h-12 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center">
                     <Sparkles className="w-6 h-6 text-secondary-foreground" />
                   </div>
-                  <h3 className="font-medium text-foreground mb-2">AI-Powered</h3>
+                  <h3 className="font-medium text-foreground mb-2">{t("studio.aiPowered")}</h3>
                   <p className="text-sm text-muted-foreground">
-                    Advanced AI accurately identifies walls and applies realistic color changes
+                    {t("studio.aiDesc")}
                   </p>
                 </div>
                 <div className="text-center p-6">
                   <div className="w-12 h-12 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center">
                     <Paintbrush className="w-6 h-6 text-secondary-foreground" />
                   </div>
-                  <h3 className="font-medium text-foreground mb-2">100+ Colors</h3>
+                  <h3 className="font-medium text-foreground mb-2">{t("studio.colors")}</h3>
                   <p className="text-sm text-muted-foreground">
-                    Choose from curated designer colors or pick your own custom shade
+                    {t("studio.colorsDesc")}
                   </p>
                 </div>
                 <div className="text-center p-6">
@@ -296,9 +299,9 @@ const Index = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                   </div>
-                  <h3 className="font-medium text-foreground mb-2">Compare & Download</h3>
+                  <h3 className="font-medium text-foreground mb-2">{t("studio.compare")}</h3>
                   <p className="text-sm text-muted-foreground">
-                    Toggle between before and after, then download your visualization
+                    {t("studio.compareDesc")}
                   </p>
                 </div>
               </div>
@@ -354,15 +357,12 @@ const Index = () => {
                   />
 
                   <div className="mt-6 pt-6 border-t border-border space-y-4">
-                    <Button
-                      onClick={() => setCraftsmenDialogOpen(true)}
-                      className="w-full gap-2 bg-primary hover:bg-primary/90"
-                    >
+                    <Button onClick={() => setCraftsmenDialogOpen(true)} className="w-full gap-2 bg-primary hover:bg-primary/90">
                       <Hammer className="w-4 h-4" />
-                      Find Craftsmen
+                      {t("studio.findCraftsmen")}
                     </Button>
                     <p className="text-xs text-muted-foreground">
-                      Tip: Click any color to instantly preview it on your wall. The AI will preserve all furniture and decorations.
+                      {t("studio.tip")}
                     </p>
                   </div>
                 </div>
@@ -376,10 +376,10 @@ const Index = () => {
       <footer className="border-t border-border mt-auto py-6">
         <div className="container mx-auto px-4 text-center space-y-2">
           <p className="text-sm text-muted-foreground">
-            Powered by AI • Results may vary based on image quality and lighting • Pricing will not be based on image quality
+            {t("studio.footer")}
           </p>
           <Link to="/privacy" className="text-xs text-muted-foreground hover:text-foreground underline">
-            Privacy Policy
+            {t("studio.privacyPolicy")}
           </Link>
         </div>
       </footer>

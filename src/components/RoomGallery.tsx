@@ -2,6 +2,7 @@ import { X, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export interface ProcessedRoom {
   id: string;
@@ -20,29 +21,18 @@ interface RoomGalleryProps {
   disabled?: boolean;
 }
 
-export function RoomGallery({
-  rooms,
-  currentRoomId,
-  onSelectRoom,
-  onRemoveRoom,
-  onAddRoom,
-  disabled,
-}: RoomGalleryProps) {
+export function RoomGallery({ rooms, currentRoomId, onSelectRoom, onRemoveRoom, onAddRoom, disabled }: RoomGalleryProps) {
+  const { t } = useLanguage();
+
   if (rooms.length === 0) return null;
 
   return (
     <div className="bg-card/80 backdrop-blur-sm border border-border rounded-xl p-3">
       <div className="flex items-center justify-between mb-2">
-        <h4 className="text-sm font-medium text-foreground">Your Rooms ({rooms.length})</h4>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onAddRoom}
-          disabled={disabled}
-          className="gap-1 h-7 text-xs"
-        >
+        <h4 className="text-sm font-medium text-foreground">{t("rooms.yourRooms")} ({rooms.length})</h4>
+        <Button variant="outline" size="sm" onClick={onAddRoom} disabled={disabled} className="gap-1 h-7 text-xs">
           <Plus className="w-3 h-3" />
-          Add Room
+          {t("rooms.addRoom")}
         </Button>
       </div>
       
@@ -60,20 +50,10 @@ export function RoomGallery({
               )}
               onClick={() => onSelectRoom(room.id)}
             >
-              <img
-                src={room.processedImage || room.originalImage}
-                alt={`Room with ${room.colorName}`}
-                className="w-20 h-14 object-cover"
-              />
-              <div 
-                className="absolute bottom-0 left-0 right-0 h-1"
-                style={{ backgroundColor: room.colorHex }}
-              />
+              <img src={room.processedImage || room.originalImage} alt={`Room with ${room.colorName}`} className="w-20 h-14 object-cover" />
+              <div className="absolute bottom-0 left-0 right-0 h-1" style={{ backgroundColor: room.colorHex }} />
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onRemoveRoom(room.id);
-                }}
+                onClick={(e) => { e.stopPropagation(); onRemoveRoom(room.id); }}
                 disabled={disabled}
                 className={cn(
                   "absolute top-0.5 right-0.5 w-5 h-5 rounded-full",
