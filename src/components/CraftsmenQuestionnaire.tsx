@@ -3,15 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Hammer, ArrowRight, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/i18n/LanguageContext";
 import { RoomMeasurement, type RoomMeasurementData } from "@/components/RoomMeasurement";
 
 interface CraftsmenQuestionnaireProps {
@@ -20,31 +15,19 @@ interface CraftsmenQuestionnaireProps {
 }
 
 interface FormData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  address: string;
-  city: string;
-  postalCode: string;
-  projectDescription: string;
+  firstName: string; lastName: string; email: string; phone: string;
+  address: string; city: string; postalCode: string; projectDescription: string;
 }
 
 export function CraftsmenQuestionnaire({ open, onOpenChange }: CraftsmenQuestionnaireProps) {
+  const { t } = useLanguage();
   const { toast } = useToast();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    address: "",
-    city: "",
-    postalCode: "",
-    projectDescription: "",
+    firstName: "", lastName: "", email: "", phone: "", address: "", city: "", postalCode: "", projectDescription: "",
   });
   const [roomMeasurement, setRoomMeasurement] = useState<RoomMeasurementData>({
-    sections: [{ id: "initial", label: "Section 1", length: "", width: "" }],
+    sections: [{ id: "initial", label: `${t("measurement.section")} 1`, length: "", width: "" }],
     totalSquareMeters: 0,
     floorPhoto: null,
   });
@@ -55,51 +38,24 @@ export function CraftsmenQuestionnaire({ open, onOpenChange }: CraftsmenQuestion
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Basic validation
     if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone) {
-      toast({
-        title: "Missing information",
-        description: "Please fill in all required fields.",
-        variant: "destructive",
-      });
+      toast({ title: t("craftsmen.missingInfo"), description: t("craftsmen.fillRequired"), variant: "destructive" });
       return;
     }
-
     if (roomMeasurement.totalSquareMeters <= 0) {
-      toast({
-        title: "Room measurements required",
-        description: "Please enter room dimensions so the craftsman can prepare an accurate quote.",
-        variant: "destructive",
-      });
+      toast({ title: t("craftsmen.measurementsRequired"), description: t("craftsmen.enterDimensions"), variant: "destructive" });
       return;
     }
-
-    // TODO: Submit form data to backend
     console.log("Form submitted:", { ...formData, roomMeasurement });
     setIsSubmitted(true);
   };
 
   const handleClose = () => {
     onOpenChange(false);
-    // Reset form after closing
     setTimeout(() => {
       setIsSubmitted(false);
-      setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
-        address: "",
-        city: "",
-        postalCode: "",
-        projectDescription: "",
-      });
-      setRoomMeasurement({
-        sections: [{ id: "initial", label: "Section 1", length: "", width: "" }],
-        totalSquareMeters: 0,
-        floorPhoto: null,
-      });
+      setFormData({ firstName: "", lastName: "", email: "", phone: "", address: "", city: "", postalCode: "", projectDescription: "" });
+      setRoomMeasurement({ sections: [{ id: "initial", label: `${t("measurement.section")} 1`, length: "", width: "" }], totalSquareMeters: 0, floorPhoto: null });
     }, 300);
   };
 
@@ -112,14 +68,10 @@ export function CraftsmenQuestionnaire({ open, onOpenChange }: CraftsmenQuestion
               <CheckCircle2 className="w-8 h-8 text-primary" />
             </div>
             <DialogHeader>
-              <DialogTitle className="text-center">Thank You!</DialogTitle>
-              <DialogDescription className="text-center">
-                Your request has been submitted. A craftsman will contact you shortly to discuss your project.
-              </DialogDescription>
+              <DialogTitle className="text-center">{t("craftsmenDialog.thankYou")}</DialogTitle>
+              <DialogDescription className="text-center">{t("craftsmenDialog.submitted")}</DialogDescription>
             </DialogHeader>
-            <Button onClick={handleClose} className="mt-4">
-              Close
-            </Button>
+            <Button onClick={handleClose} className="mt-4">{t("craftsmenDialog.close")}</Button>
           </div>
         ) : (
           <>
@@ -128,118 +80,58 @@ export function CraftsmenQuestionnaire({ open, onOpenChange }: CraftsmenQuestion
                 <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
                   <Hammer className="w-5 h-5 text-primary-foreground" />
                 </div>
-                <DialogTitle>Find a Craftsman</DialogTitle>
+                <DialogTitle>{t("craftsmenDialog.findCraftsman")}</DialogTitle>
               </div>
-              <DialogDescription>
-                Fill in your details and we'll connect you with trusted local craftsmen for your painting project.
-              </DialogDescription>
+              <DialogDescription>{t("craftsmenDialog.fillDetailsDialog")}</DialogDescription>
             </DialogHeader>
 
             <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-              {/* Name fields */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name *</Label>
-                  <Input
-                    id="firstName"
-                    value={formData.firstName}
-                    onChange={(e) => handleInputChange("firstName", e.target.value)}
-                    placeholder="John"
-                  />
+                  <Label htmlFor="firstName">{t("craftsmen.firstName")} *</Label>
+                  <Input id="firstName" value={formData.firstName} onChange={(e) => handleInputChange("firstName", e.target.value)} />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name *</Label>
-                  <Input
-                    id="lastName"
-                    value={formData.lastName}
-                    onChange={(e) => handleInputChange("lastName", e.target.value)}
-                    placeholder="Doe"
-                  />
+                  <Label htmlFor="lastName">{t("craftsmen.lastName")} *</Label>
+                  <Input id="lastName" value={formData.lastName} onChange={(e) => handleInputChange("lastName", e.target.value)} />
                 </div>
               </div>
-
-              {/* Contact fields */}
               <div className="space-y-2">
-                <Label htmlFor="email">Email *</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange("email", e.target.value)}
-                  placeholder="john.doe@example.com"
-                />
+                <Label htmlFor="email">{t("craftsmen.email")} *</Label>
+                <Input id="email" type="email" value={formData.email} onChange={(e) => handleInputChange("email", e.target.value)} />
               </div>
-
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number *</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => handleInputChange("phone", e.target.value)}
-                  placeholder="+46 70 123 4567"
-                />
+                <Label htmlFor="phone">{t("craftsmen.phone")} *</Label>
+                <Input id="phone" type="tel" value={formData.phone} onChange={(e) => handleInputChange("phone", e.target.value)} placeholder="+46 70 123 4567" />
               </div>
-
-              {/* Address fields */}
               <div className="space-y-2">
-                <Label htmlFor="address">Street Address</Label>
-                <Input
-                  id="address"
-                  value={formData.address}
-                  onChange={(e) => handleInputChange("address", e.target.value)}
-                  placeholder="123 Main Street"
-                />
+                <Label htmlFor="address">{t("craftsmen.streetAddress")}</Label>
+                <Input id="address" value={formData.address} onChange={(e) => handleInputChange("address", e.target.value)} />
               </div>
-
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="city">City</Label>
-                  <Input
-                    id="city"
-                    value={formData.city}
-                    onChange={(e) => handleInputChange("city", e.target.value)}
-                    placeholder="Stockholm"
-                  />
+                  <Label htmlFor="city">{t("craftsmen.city")}</Label>
+                  <Input id="city" value={formData.city} onChange={(e) => handleInputChange("city", e.target.value)} />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="postalCode">Postal Code</Label>
-                  <Input
-                    id="postalCode"
-                    value={formData.postalCode}
-                    onChange={(e) => handleInputChange("postalCode", e.target.value)}
-                    placeholder="123 45"
-                  />
+                  <Label htmlFor="postalCode">{t("craftsmen.postalCode")}</Label>
+                  <Input id="postalCode" value={formData.postalCode} onChange={(e) => handleInputChange("postalCode", e.target.value)} />
                 </div>
               </div>
-
-              {/* Room Measurement */}
               <div className="border-t border-border pt-4">
                 <RoomMeasurement data={roomMeasurement} onChange={setRoomMeasurement} />
               </div>
-
-              {/* Project description */}
               <div className="space-y-2">
-                <Label htmlFor="projectDescription">Project Description</Label>
-                <Textarea
-                  id="projectDescription"
-                  value={formData.projectDescription}
-                  onChange={(e) => handleInputChange("projectDescription", e.target.value)}
-                  placeholder="Tell us about your painting project..."
-                  rows={3}
-                />
+                <Label htmlFor="projectDescription">{t("craftsmen.projectDescription")}</Label>
+                <Textarea id="projectDescription" value={formData.projectDescription} onChange={(e) => handleInputChange("projectDescription", e.target.value)} placeholder={t("craftsmenDialog.tellUs")} rows={3} />
               </div>
-
               <div className="pt-4">
                 <Button type="submit" className="w-full gap-2">
-                  Submit Request
+                  {t("craftsmen.submitRequest")}
                   <ArrowRight className="w-4 h-4" />
                 </Button>
               </div>
-
-              <p className="text-xs text-muted-foreground text-center">
-                By submitting, you agree to be contacted by our partner craftsmen.
-              </p>
+              <p className="text-xs text-muted-foreground text-center">{t("craftsmen.bySubmitting")}</p>
             </form>
           </>
         )}

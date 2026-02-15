@@ -1,10 +1,13 @@
 import { Paintbrush } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 interface ProcessingOverlayProps {
   colorName?: string;
 }
 
 export function ProcessingOverlay({ colorName }: ProcessingOverlayProps) {
+  const { t } = useLanguage();
+
   return (
     <div className="processing-overlay rounded-2xl">
       <div className="flex flex-col items-center gap-4">
@@ -14,10 +17,10 @@ export function ProcessingOverlay({ colorName }: ProcessingOverlayProps) {
           </div>
         </div>
         <div className="text-center">
-          <p className="font-serif text-lg font-medium text-foreground">Painting your walls...</p>
+          <p className="font-serif text-lg font-medium text-foreground">{t("processing.painting")}</p>
           {colorName && (
             <p className="text-sm text-muted-foreground mt-1">
-              Applying {colorName}
+              {t("processing.applying")} {colorName}
             </p>
           )}
         </div>

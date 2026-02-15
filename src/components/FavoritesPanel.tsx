@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Heart, Trash2, Image as ImageIcon } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useLanguage } from "@/i18n/LanguageContext";
 import type { Favorite } from "@/hooks/useFavorites";
 
 interface FavoritesPanelProps {
@@ -12,30 +13,19 @@ interface FavoritesPanelProps {
   disabled?: boolean;
 }
 
-export function FavoritesPanel({
-  favorites,
-  loading,
-  onSelectFavorite,
-  onRemoveFavorite,
-  selectedHex,
-  disabled,
-}: FavoritesPanelProps) {
+export function FavoritesPanel({ favorites, loading, onSelectFavorite, onRemoveFavorite, selectedHex, disabled }: FavoritesPanelProps) {
+  const { t } = useLanguage();
+
   if (loading) {
-    return (
-      <div className="py-4 text-center text-sm text-muted-foreground">
-        Loading favorites...
-      </div>
-    );
+    return <div className="py-4 text-center text-sm text-muted-foreground">{t("favorites.loading")}</div>;
   }
 
   if (favorites.length === 0) {
     return (
       <div className="py-8 text-center">
         <Heart className="w-8 h-8 mx-auto mb-2 text-muted-foreground/50" />
-        <p className="text-sm text-muted-foreground">No favorites yet</p>
-        <p className="text-xs text-muted-foreground mt-1">
-          Click the heart icon on a color to save it
-        </p>
+        <p className="text-sm text-muted-foreground">{t("favorites.noFavorites")}</p>
+        <p className="text-xs text-muted-foreground mt-1">{t("favorites.clickHeart")}</p>
       </div>
     );
   }
@@ -54,24 +44,16 @@ export function FavoritesPanel({
             )}
             onClick={() => !disabled && onSelectFavorite(favorite)}
           >
-            <div
-              className="w-10 h-10 rounded-lg border-2 border-border flex-shrink-0"
-              style={{ backgroundColor: favorite.hex_value }}
-            />
+            <div className="w-10 h-10 rounded-lg border-2 border-border flex-shrink-0" style={{ backgroundColor: favorite.hex_value }} />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{favorite.color_name}</p>
               <p className="text-xs text-muted-foreground">{favorite.hex_value}</p>
             </div>
-            {favorite.photo_url && (
-              <ImageIcon className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-            )}
+            {favorite.photo_url && <ImageIcon className="w-4 h-4 text-muted-foreground flex-shrink-0" />}
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onRemoveFavorite(favorite.id);
-              }}
+              onClick={(e) => { e.stopPropagation(); onRemoveFavorite(favorite.id); }}
               className="p-1 hover:bg-destructive/10 rounded transition-colors"
-              title="Remove from favorites"
+              title={t("favorites.removeFrom")}
             >
               <Trash2 className="w-4 h-4 text-muted-foreground hover:text-destructive" />
             </button>

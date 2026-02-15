@@ -1,5 +1,6 @@
 import { useRef, useCallback } from "react";
 import { Camera, Upload, Image as ImageIcon } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 interface ImageUploaderProps {
   onImageSelect: (imageData: string) => void;
@@ -7,14 +8,12 @@ interface ImageUploaderProps {
 }
 
 export function ImageUploader({ onImageSelect, disabled }: ImageUploaderProps) {
+  const { t } = useLanguage();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const processFile = useCallback((file: File) => {
-    if (!file.type.startsWith('image/')) {
-      return;
-    }
-
+    if (!file.type.startsWith('image/')) return;
     const reader = new FileReader();
     reader.onload = (e) => {
       const result = e.target?.result as string;
@@ -25,17 +24,13 @@ export function ImageUploader({ onImageSelect, disabled }: ImageUploaderProps) {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      processFile(file);
-    }
+    if (file) processFile(file);
   };
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
-    if (file) {
-      processFile(file);
-    }
+    if (file) processFile(file);
   }, [processFile]);
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -54,8 +49,8 @@ export function ImageUploader({ onImageSelect, disabled }: ImageUploaderProps) {
             <ImageIcon className="w-8 h-8 text-muted-foreground" />
           </div>
           <div>
-            <p className="text-foreground font-medium">Drop your wall photo here</p>
-            <p className="text-sm text-muted-foreground mt-1">or use the buttons below</p>
+            <p className="text-foreground font-medium">{t("upload.drop")}</p>
+            <p className="text-sm text-muted-foreground mt-1">{t("upload.orButtons")}</p>
           </div>
         </div>
       </div>
@@ -67,7 +62,7 @@ export function ImageUploader({ onImageSelect, disabled }: ImageUploaderProps) {
           className="btn-upload flex-1 flex items-center justify-center gap-2"
         >
           <Camera className="w-5 h-5" />
-          Take Photo
+          {t("upload.takePhoto")}
         </button>
         <button
           onClick={() => fileInputRef.current?.click()}
@@ -75,25 +70,12 @@ export function ImageUploader({ onImageSelect, disabled }: ImageUploaderProps) {
           className="btn-upload flex-1 flex items-center justify-center gap-2"
         >
           <Upload className="w-5 h-5" />
-          Upload Image
+          {t("upload.uploadImage")}
         </button>
       </div>
 
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        onChange={handleFileChange}
-        className="hidden"
-      />
-      <input
-        ref={cameraInputRef}
-        type="file"
-        accept="image/*"
-        capture="environment"
-        onChange={handleFileChange}
-        className="hidden"
-      />
+      <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+      <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" onChange={handleFileChange} className="hidden" />
     </div>
   );
 }

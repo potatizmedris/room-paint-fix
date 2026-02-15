@@ -11,8 +11,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { User, LogOut, Shield } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export function UserMenu() {
+  const { t } = useLanguage();
   const { user, loading: authLoading, signOut } = useAuth();
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const navigate = useNavigate();
@@ -25,7 +27,7 @@ export function UserMenu() {
     return (
       <>
         <Button variant="outline" size="sm" onClick={() => setAuthDialogOpen(true)}>
-          Sign in
+          {t("menu.signIn")}
         </Button>
         <AuthDialog open={authDialogOpen} onOpenChange={setAuthDialogOpen} />
       </>
@@ -44,20 +46,20 @@ export function UserMenu() {
         <DropdownMenuItem asChild>
           <Link to="/account" className="flex items-center">
             <User className="w-4 h-4 mr-2" />
-            Your Account
+            {t("menu.yourAccount")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link to="/privacy" className="flex items-center">
             <Shield className="w-4 h-4 mr-2" />
-            Privacy Policy
+            {t("menu.privacyPolicy")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={async () => { await signOut(); navigate("/"); }}>
           <LogOut className="w-4 h-4 mr-2" />
-          Sign out
+          {t("menu.signOut")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

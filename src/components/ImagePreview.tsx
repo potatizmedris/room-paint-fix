@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ArrowLeftRight, X, Download } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 interface ImagePreviewProps {
   originalImage: string;
@@ -8,8 +9,8 @@ interface ImagePreviewProps {
 }
 
 export function ImagePreview({ originalImage, processedImage, onClear }: ImagePreviewProps) {
+  const { t } = useLanguage();
   const [showOriginal, setShowOriginal] = useState(false);
-
   const displayImage = showOriginal ? originalImage : (processedImage || originalImage);
 
   const handleDownload = () => {
@@ -31,11 +32,10 @@ export function ImagePreview({ originalImage, processedImage, onClear }: ImagePr
           alt={showOriginal ? "Original wall" : "Wall with new color"}
           className="w-full h-auto object-contain max-h-[500px]"
         />
-        
         <button
           onClick={onClear}
           className="absolute top-3 right-3 p-2 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background transition-colors"
-          title="Clear image"
+          title={t("preview.clear")}
         >
           <X className="w-5 h-5 text-foreground" />
         </button>
@@ -48,7 +48,7 @@ export function ImagePreview({ originalImage, processedImage, onClear }: ImagePr
                 className="flex items-center gap-2 px-4 py-2 rounded-full bg-background/80 backdrop-blur-sm text-sm font-medium text-foreground hover:bg-background transition-colors"
               >
                 <ArrowLeftRight className="w-4 h-4" />
-                {showOriginal ? "Show Result" : "Show Original"}
+                {showOriginal ? t("preview.showResult") : t("preview.showOriginal")}
               </button>
             </div>
             <button
@@ -56,7 +56,7 @@ export function ImagePreview({ originalImage, processedImage, onClear }: ImagePr
               className="absolute bottom-3 right-3 flex items-center gap-2 px-4 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
             >
               <Download className="w-4 h-4" />
-              Download
+              {t("preview.download")}
             </button>
           </>
         )}
@@ -64,23 +64,15 @@ export function ImagePreview({ originalImage, processedImage, onClear }: ImagePr
 
       {processedImage && (
         <div className="flex justify-center gap-2">
-          <span 
-            className={`text-xs px-3 py-1 rounded-full transition-colors ${
-              showOriginal 
-                ? 'bg-primary text-primary-foreground' 
-                : 'bg-muted text-muted-foreground'
-            }`}
-          >
-            Original
+          <span className={`text-xs px-3 py-1 rounded-full transition-colors ${
+            showOriginal ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+          }`}>
+            {t("preview.original")}
           </span>
-          <span 
-            className={`text-xs px-3 py-1 rounded-full transition-colors ${
-              !showOriginal 
-                ? 'bg-primary text-primary-foreground' 
-                : 'bg-muted text-muted-foreground'
-            }`}
-          >
-            New Color
+          <span className={`text-xs px-3 py-1 rounded-full transition-colors ${
+            !showOriginal ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+          }`}>
+            {t("preview.newColor")}
           </span>
         </div>
       )}
