@@ -8,6 +8,7 @@ import { Hammer, ArrowRight, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { MultiRoomMeasurement, type MultiRoomMeasurementData, type MeasurementRoom } from "@/components/MultiRoomMeasurement";
+import { ProjectDetailsFields, defaultProjectDetails, type ProjectDetails } from "@/components/ProjectDetailsFields";
 import type { ProcessedRoom } from "@/components/RoomGallery";
 
 interface CraftsmenQuestionnaireProps {
@@ -57,6 +58,7 @@ export function CraftsmenQuestionnaire({ open, onOpenChange, studioRooms }: Craf
   const [measurement, setMeasurement] = useState<MultiRoomMeasurementData>(
     buildInitialMeasurement(studioRooms, t("measurement.section"), t("measurement.room"))
   );
+  const [projectDetails, setProjectDetails] = useState<ProjectDetails>(defaultProjectDetails);
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -72,7 +74,7 @@ export function CraftsmenQuestionnaire({ open, onOpenChange, studioRooms }: Craf
       toast({ title: t("craftsmen.measurementsRequired"), description: t("craftsmen.enterDimensions"), variant: "destructive" });
       return;
     }
-    console.log("Form submitted:", { ...formData, measurement });
+    console.log("Form submitted:", { ...formData, measurement, projectDetails });
     setIsSubmitted(true);
   };
 
@@ -82,6 +84,7 @@ export function CraftsmenQuestionnaire({ open, onOpenChange, studioRooms }: Craf
       setIsSubmitted(false);
       setFormData({ firstName: "", lastName: "", email: "", phone: "", address: "", city: "", postalCode: "", projectDescription: "" });
       setMeasurement(buildInitialMeasurement(studioRooms, t("measurement.section"), t("measurement.room")));
+      setProjectDetails(defaultProjectDetails);
     }, 300);
   };
 
@@ -151,6 +154,14 @@ export function CraftsmenQuestionnaire({ open, onOpenChange, studioRooms }: Craf
                   data={measurement}
                   onChange={setMeasurement}
                   readOnlyRooms={hasStudioRooms}
+                />
+              </div>
+              <div className="border-t border-border pt-4">
+                <Label className="text-base font-semibold mb-3 block">{t("details.sectionTitle")}</Label>
+                <ProjectDetailsFields
+                  data={projectDetails}
+                  onChange={setProjectDetails}
+                  hideColorCode={hasStudioRooms}
                 />
               </div>
               <div className="space-y-2">
