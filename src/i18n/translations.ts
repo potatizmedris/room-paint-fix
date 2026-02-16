@@ -64,6 +64,9 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "studio.compareDesc": "Växla mellan före och efter, ladda sedan ner din visualisering",
     "studio.findCraftsmen": "Hitta hantverkare",
     "studio.tip": "Tips: Klicka på valfri färg för att omedelbart förhandsgranska den på din vägg. AI:n bevarar alla möbler och dekorationer.",
+    "studio.addRoomTitle": "Vill du lägga till ett rum till?",
+    "studio.addRoomDesc": "Du kan lägga till fler rum innan du skickar din förfrågan till hantverkare.",
+    "studio.addRoom": "Lägg till rum",
     "studio.footer": "Drivs av AI • Resultaten kan variera beroende på bildkvalitet och belysning • Prissättningen baseras inte på bildkvalitet",
     "studio.privacyPolicy": "Integritetspolicy",
 
@@ -297,6 +300,9 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "studio.compareDesc": "Toggle between before and after, then download your visualization",
     "studio.findCraftsmen": "Find Craftsmen",
     "studio.tip": "Tip: Click any color to instantly preview it on your wall. The AI will preserve all furniture and decorations.",
+    "studio.addRoomTitle": "Do you want to add another room?",
+    "studio.addRoomDesc": "You can add more rooms before submitting your request to craftsmen.",
+    "studio.addRoom": "Add Room",
     "studio.footer": "Powered by AI • Results may vary based on image quality and lighting • Pricing will not be based on image quality",
     "studio.privacyPolicy": "Privacy Policy",
 
@@ -516,6 +522,9 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "studio.compareDesc": "Alterna entre antes y después, luego descarga tu visualización",
     "studio.findCraftsmen": "Buscar artesanos",
     "studio.tip": "Consejo: Haz clic en cualquier color para previsualizarlo al instante en tu pared. La IA preservará todos los muebles y decoraciones.",
+    "studio.addRoomTitle": "¿Quieres añadir otra habitación?",
+    "studio.addRoomDesc": "Puedes añadir más habitaciones antes de enviar tu solicitud a los artesanos.",
+    "studio.addRoom": "Añadir habitación",
     "studio.footer": "Impulsado por IA • Los resultados pueden variar según la calidad de la imagen y la iluminación",
     "studio.privacyPolicy": "Política de privacidad",
 
@@ -735,6 +744,9 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "studio.compareDesc": "Przełączaj między przed i po, a następnie pobierz swoją wizualizację",
     "studio.findCraftsmen": "Znajdź rzemieślnika",
     "studio.tip": "Wskazówka: Kliknij dowolny kolor, aby natychmiast zobaczyć go na ścianie. AI zachowa wszystkie meble i dekoracje.",
+    "studio.addRoomTitle": "Chcesz dodać kolejny pokój?",
+    "studio.addRoomDesc": "Możesz dodać więcej pokoi przed wysłaniem zapytania do rzemieślników.",
+    "studio.addRoom": "Dodaj pokój",
     "studio.footer": "Napędzane AI • Wyniki mogą się różnić w zależności od jakości zdjęcia i oświetlenia",
     "studio.privacyPolicy": "Polityka prywatności",
 
@@ -954,6 +966,9 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "studio.compareDesc": "Wechseln Sie zwischen vorher und nachher und laden Sie dann Ihre Visualisierung herunter",
     "studio.findCraftsmen": "Handwerker finden",
     "studio.tip": "Tipp: Klicken Sie auf eine Farbe, um sie sofort an Ihrer Wand zu sehen. Die KI bewahrt alle Möbel und Dekorationen.",
+    "studio.addRoomTitle": "Möchten Sie ein weiteres Zimmer hinzufügen?",
+    "studio.addRoomDesc": "Sie können weitere Zimmer hinzufügen, bevor Sie Ihre Anfrage an Handwerker senden.",
+    "studio.addRoom": "Zimmer hinzufügen",
     "studio.footer": "KI-gestützt • Ergebnisse können je nach Bildqualität und Beleuchtung variieren",
     "studio.privacyPolicy": "Datenschutzrichtlinie",
 

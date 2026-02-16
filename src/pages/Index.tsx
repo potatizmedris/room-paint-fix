@@ -4,6 +4,7 @@ import { ImageUploader } from "@/components/ImageUploader";
 import { ColorPicker, type ColorOption } from "@/components/ColorPicker";
 import { ImagePreview } from "@/components/ImagePreview";
 import { ProcessingOverlay } from "@/components/ProcessingOverlay";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { AuthDialog } from "@/components/AuthDialog";
 import { StartScreen } from "@/components/StartScreen";
 import { PathPicker, type UserPath } from "@/components/PathPicker";
@@ -19,7 +20,7 @@ import { useWallColorChanger } from "@/hooks/useWallColorChanger";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { Paintbrush, Sparkles, Hammer } from "lucide-react";
+import { Paintbrush, Sparkles, Hammer, Plus } from "lucide-react";
 import { BackButton } from "@/components/BackButton";
 import { Button } from "@/components/ui/button";
 
@@ -32,6 +33,7 @@ const Index = () => {
   
   const [craftsmenDialogOpen, setCraftsmenDialogOpen] = useState(false);
   const [hasEnteredStudio, setHasEnteredStudio] = useState(false);
+  const [addRoomDialogOpen, setAddRoomDialogOpen] = useState(false);
   const [selectedPath, setSelectedPath] = useState<UserPath | null>(null);
   const [selectedProjectType, setSelectedProjectType] = useState<ProjectType | null>(null);
   
@@ -357,7 +359,7 @@ const Index = () => {
                   />
 
                   <div className="mt-6 pt-6 border-t border-border space-y-4">
-                    <Button onClick={() => setCraftsmenDialogOpen(true)} className="w-full gap-2 bg-primary hover:bg-primary/90">
+                    <Button onClick={() => setAddRoomDialogOpen(true)} className="w-full gap-2 bg-primary hover:bg-primary/90">
                       <Hammer className="w-4 h-4" />
                       {t("studio.findCraftsmen")}
                     </Button>
@@ -389,6 +391,39 @@ const Index = () => {
       
       {/* Craftsmen Questionnaire Dialog */}
       <CraftsmenQuestionnaire open={craftsmenDialogOpen} onOpenChange={setCraftsmenDialogOpen} />
+
+      {/* Add Another Room Dialog */}
+      <Dialog open={addRoomDialogOpen} onOpenChange={setAddRoomDialogOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>{t("studio.addRoomTitle")}</DialogTitle>
+            <DialogDescription>{t("studio.addRoomDesc")}</DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-3 pt-2">
+            <Button
+              variant="outline"
+              className="w-full gap-2"
+              onClick={() => {
+                setAddRoomDialogOpen(false);
+                handleAddRoom();
+              }}
+            >
+              <Plus className="w-4 h-4" />
+              {t("studio.addRoom")}
+            </Button>
+            <Button
+              className="w-full gap-2"
+              onClick={() => {
+                setAddRoomDialogOpen(false);
+                setCraftsmenDialogOpen(true);
+              }}
+            >
+              <Hammer className="w-4 h-4" />
+              {t("studio.findCraftsmen")}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
