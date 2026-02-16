@@ -101,6 +101,7 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "preview.showOriginal": "Visa original",
     "preview.download": "Ladda ner",
     "preview.clear": "Rensa bild",
+    "preview.sideBySide": "Sida vid sida",
     "preview.original": "Original",
     "preview.newColor": "Ny färg",
 
@@ -329,6 +330,7 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "preview.showOriginal": "Show Original",
     "preview.download": "Download",
     "preview.clear": "Clear image",
+    "preview.sideBySide": "Side by Side",
     "preview.original": "Original",
     "preview.newColor": "New Color",
 
@@ -547,6 +549,7 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "preview.showOriginal": "Mostrar original",
     "preview.download": "Descargar",
     "preview.clear": "Borrar imagen",
+    "preview.sideBySide": "Lado a lado",
     "preview.original": "Original",
     "preview.newColor": "Nuevo color",
 
@@ -765,6 +768,7 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "preview.showOriginal": "Pokaż oryginał",
     "preview.download": "Pobierz",
     "preview.clear": "Wyczyść obraz",
+    "preview.sideBySide": "Obok siebie",
     "preview.original": "Oryginał",
     "preview.newColor": "Nowy kolor",
 
@@ -983,6 +987,7 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "preview.showOriginal": "Original anzeigen",
     "preview.download": "Herunterladen",
     "preview.clear": "Bild löschen",
+    "preview.sideBySide": "Nebeneinander",
     "preview.original": "Original",
     "preview.newColor": "Neue Farbe",
 
