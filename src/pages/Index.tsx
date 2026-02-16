@@ -390,7 +390,7 @@ const Index = () => {
       <AuthDialog open={authDialogOpen} onOpenChange={setAuthDialogOpen} />
       
       {/* Craftsmen Questionnaire Dialog */}
-      <CraftsmenQuestionnaire open={craftsmenDialogOpen} onOpenChange={setCraftsmenDialogOpen} />
+      <CraftsmenQuestionnaire open={craftsmenDialogOpen} onOpenChange={setCraftsmenDialogOpen} studioRooms={rooms} />
 
       {/* Add Another Room Dialog */}
       <Dialog open={addRoomDialogOpen} onOpenChange={setAddRoomDialogOpen}>

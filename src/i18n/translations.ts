@@ -222,6 +222,9 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "measurement.takePhoto": "Ta foto",
     "measurement.upload": "Ladda upp",
     "measurement.remove": "Ta bort",
+    "measurement.room": "Rum",
+    "measurement.addRoom": "Lägg till rum",
+    "measurement.uploadPhoto": "Ladda upp foto",
     "measurement.disclaimer": "Mätningsansvarsfriskrivning:",
     "measurement.disclaimerText": "Vänligen mät så noggrant som möjligt. Hantverkaren kan justera prissättningen om de faktiska rummåtten avviker avsevärt från din inlämning. Runda hellre upp något vid tveksamhet.",
 
@@ -446,6 +449,9 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "measurement.takePhoto": "Take Photo",
     "measurement.upload": "Upload",
     "measurement.remove": "Remove",
+    "measurement.room": "Room",
+    "measurement.addRoom": "Add room",
+    "measurement.uploadPhoto": "Upload photo",
     "measurement.disclaimer": "Measurement disclaimer:",
     "measurement.disclaimerText": "Please measure as accurately as possible. The craftsman may adjust pricing if the actual room dimensions differ significantly from your submission. When in doubt, round up slightly.",
 
@@ -668,6 +674,9 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "measurement.takePhoto": "Tomar foto",
     "measurement.upload": "Subir",
     "measurement.remove": "Eliminar",
+    "measurement.room": "Habitación",
+    "measurement.addRoom": "Añadir habitación",
+    "measurement.uploadPhoto": "Subir foto",
     "measurement.disclaimer": "Aviso sobre mediciones:",
     "measurement.disclaimerText": "Mide con la mayor precisión posible. El artesano puede ajustar el precio si las dimensiones reales difieren significativamente. En caso de duda, redondea hacia arriba.",
 
@@ -890,6 +899,9 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "measurement.takePhoto": "Zrób zdjęcie",
     "measurement.upload": "Prześlij",
     "measurement.remove": "Usuń",
+    "measurement.room": "Pokój",
+    "measurement.addRoom": "Dodaj pokój",
+    "measurement.uploadPhoto": "Prześlij zdjęcie",
     "measurement.disclaimer": "Zastrzeżenie dotyczące pomiarów:",
     "measurement.disclaimerText": "Proszę mierzyć jak najdokładniej. Rzemieślnik może skorygować cenę, jeśli rzeczywiste wymiary znacznie różnią się od zgłoszonych. W razie wątpliwości zaokrąglij w górę.",
 
@@ -1112,6 +1124,9 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "measurement.takePhoto": "Foto aufnehmen",
     "measurement.upload": "Hochladen",
     "measurement.remove": "Entfernen",
+    "measurement.room": "Raum",
+    "measurement.addRoom": "Raum hinzufügen",
+    "measurement.uploadPhoto": "Foto hochladen",
     "measurement.disclaimer": "Haftungsausschluss für Messungen:",
     "measurement.disclaimerText": "Bitte messen Sie so genau wie möglich. Der Handwerker kann den Preis anpassen, wenn die tatsächlichen Raummaße erheblich abweichen. Im Zweifel runden Sie leicht auf.",
 

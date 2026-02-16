@@ -8,7 +8,7 @@ import { Hammer, ArrowRight, CheckCircle2 } from "lucide-react";
 import { BackButton } from "@/components/BackButton";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { RoomMeasurement, type RoomMeasurementData } from "@/components/RoomMeasurement";
+import { MultiRoomMeasurement, type MultiRoomMeasurementData } from "@/components/MultiRoomMeasurement";
 import type { ProjectType } from "@/components/ProjectTypePicker";
 
 interface CraftsmenQuestionnairePageProps {
@@ -28,6 +28,8 @@ interface FormData {
   projectDescription: string;
 }
 
+const generateId = () => `${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
+
 export function CraftsmenQuestionnairePage({ projectType, onBack, onComplete }: CraftsmenQuestionnairePageProps) {
   const { t } = useLanguage();
   const { toast } = useToast();
@@ -35,11 +37,15 @@ export function CraftsmenQuestionnairePage({ projectType, onBack, onComplete }: 
   const [formData, setFormData] = useState<FormData>({
     firstName: "", lastName: "", email: "", phone: "", address: "", city: "", postalCode: "", projectDescription: "",
   });
-  const [roomMeasurement, setRoomMeasurement] = useState<RoomMeasurementData>({
-    sections: [{ id: "initial", label: `${t("measurement.section")} 1`, length: "", width: "" }],
-    totalSquareMeters: 0,
-    floorPhoto: null,
-    roomPhotos: [],
+  const [measurement, setMeasurement] = useState<MultiRoomMeasurementData>({
+    rooms: [{
+      id: generateId(),
+      label: `${t("measurement.room")} 1`,
+      photo: null,
+      sections: [{ id: generateId(), label: `${t("measurement.section")} 1`, length: "", width: "" }],
+      totalSquareMeters: 0,
+    }],
+    grandTotalSquareMeters: 0,
   });
 
   const projectTypeLabel = t(`project.${projectType}`);
@@ -54,11 +60,11 @@ export function CraftsmenQuestionnairePage({ projectType, onBack, onComplete }: 
       toast({ title: t("craftsmen.missingInfo"), description: t("craftsmen.fillRequired"), variant: "destructive" });
       return;
     }
-    if (projectType === "painting" && roomMeasurement.totalSquareMeters <= 0) {
+    if (projectType === "painting" && measurement.grandTotalSquareMeters <= 0) {
       toast({ title: t("craftsmen.measurementsRequired"), description: t("craftsmen.enterDimensions"), variant: "destructive" });
       return;
     }
-    console.log("Form submitted:", { ...formData, projectType, roomMeasurement });
+    console.log("Form submitted:", { ...formData, projectType, measurement });
     setIsSubmitted(true);
   };
 
@@ -142,7 +148,7 @@ export function CraftsmenQuestionnairePage({ projectType, onBack, onComplete }: 
                 </div>
                 {projectType === "painting" && (
                   <div className="border-t border-border pt-4">
-                    <RoomMeasurement data={roomMeasurement} onChange={setRoomMeasurement} />
+                    <MultiRoomMeasurement data={measurement} onChange={setMeasurement} />
                   </div>
                 )}
                 <div className="space-y-2">
