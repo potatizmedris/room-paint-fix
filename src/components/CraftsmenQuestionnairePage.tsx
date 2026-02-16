@@ -39,6 +39,7 @@ export function CraftsmenQuestionnairePage({ projectType, onBack, onComplete }: 
     sections: [{ id: "initial", label: `${t("measurement.section")} 1`, length: "", width: "" }],
     totalSquareMeters: 0,
     floorPhoto: null,
+    roomPhotos: [],
   });
 
   const projectTypeLabel = t(`project.${projectType}`);

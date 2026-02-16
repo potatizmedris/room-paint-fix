@@ -30,6 +30,7 @@ export function CraftsmenQuestionnaire({ open, onOpenChange }: CraftsmenQuestion
     sections: [{ id: "initial", label: `${t("measurement.section")} 1`, length: "", width: "" }],
     totalSquareMeters: 0,
     floorPhoto: null,
+    roomPhotos: [],
   });
 
   const handleInputChange = (field: keyof FormData, value: string) => {
@@ -55,7 +56,7 @@ export function CraftsmenQuestionnaire({ open, onOpenChange }: CraftsmenQuestion
     setTimeout(() => {
       setIsSubmitted(false);
       setFormData({ firstName: "", lastName: "", email: "", phone: "", address: "", city: "", postalCode: "", projectDescription: "" });
-      setRoomMeasurement({ sections: [{ id: "initial", label: `${t("measurement.section")} 1`, length: "", width: "" }], totalSquareMeters: 0, floorPhoto: null });
+      setRoomMeasurement({ sections: [{ id: "initial", label: `${t("measurement.section")} 1`, length: "", width: "" }], totalSquareMeters: 0, floorPhoto: null, roomPhotos: [] });
     }, 300);
   };
 
