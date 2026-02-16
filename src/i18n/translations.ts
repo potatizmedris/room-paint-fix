@@ -255,6 +255,9 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "details.daytime": "Dag / förmiddag",
     "details.evening": "Kväll",
     "details.sectionTitle": "Projektdetaljer",
+    "details.preferredDate": "Önskat datum",
+    "details.pickDate": "Välj ett datum",
+    "details.dateDisclaimer": "Valt datum är ingen garanti men kommer att beaktas.",
 
     // Account settings / delete
     "deleteAccount.title": "Radera konto",
@@ -509,6 +512,9 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "details.daytime": "Daytime / morning",
     "details.evening": "Evening",
     "details.sectionTitle": "Project Details",
+    "details.preferredDate": "Preferred date",
+    "details.pickDate": "Pick a date",
+    "details.dateDisclaimer": "The selected date is not a guarantee but will be taken into consideration.",
 
     "deleteAccount.title": "Delete Account",
     "deleteAccount.cannotUndo": "This action cannot be undone. All your data will be permanently deleted.",
@@ -761,6 +767,9 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "details.daytime": "Día / mañana",
     "details.evening": "Tarde/noche",
     "details.sectionTitle": "Detalles del proyecto",
+    "details.preferredDate": "Fecha preferida",
+    "details.pickDate": "Seleccionar fecha",
+    "details.dateDisclaimer": "La fecha seleccionada no es una garantía, pero se tendrá en cuenta.",
 
     "deleteAccount.title": "Eliminar cuenta",
     "deleteAccount.cannotUndo": "Esta acción no se puede deshacer. Todos tus datos serán eliminados permanentemente.",
@@ -1013,6 +1022,9 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "details.daytime": "Dzień / rano",
     "details.evening": "Wieczór",
     "details.sectionTitle": "Szczegóły projektu",
+    "details.preferredDate": "Preferowana data",
+    "details.pickDate": "Wybierz datę",
+    "details.dateDisclaimer": "Wybrana data nie jest gwarancją, ale zostanie wzięta pod uwagę.",
 
     "deleteAccount.title": "Usuń konto",
     "deleteAccount.cannotUndo": "Tej czynności nie można cofnąć. Wszystkie Twoje dane zostaną trwale usunięte.",
@@ -1265,6 +1277,9 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "details.daytime": "Tagsüber / Vormittag",
     "details.evening": "Abend",
     "details.sectionTitle": "Projektdetails",
+    "details.preferredDate": "Gewünschtes Datum",
+    "details.pickDate": "Datum wählen",
+    "details.dateDisclaimer": "Das gewählte Datum ist keine Garantie, wird aber berücksichtigt.",
 
     "deleteAccount.title": "Konto löschen",
     "deleteAccount.cannotUndo": "Diese Aktion kann nicht rückgängig gemacht werden. Alle Ihre Daten werden dauerhaft gelöscht.",
