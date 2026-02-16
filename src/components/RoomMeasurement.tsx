@@ -18,6 +18,7 @@ export interface RoomMeasurementData {
   sections: RoomSection[];
   totalSquareMeters: number;
   floorPhoto: string | null;
+  roomPhotos: string[];
 }
 
 interface RoomMeasurementProps {
@@ -62,22 +63,38 @@ export function RoomMeasurement({ data, onChange }: RoomMeasurementProps) {
     updateSections(data.sections.map((s) => (s.id === id ? { ...s, [field]: sanitized } : s)));
   };
 
-  const processFile = useCallback(
-    (file: File) => {
-      if (!file.type.startsWith("image/")) return;
-      const reader = new FileReader();
-      reader.onload = (e) => { onChange({ ...data, floorPhoto: e.target?.result as string }); };
-      reader.readAsDataURL(file);
+  const processRoomPhotos = useCallback(
+    (files: FileList | File[]) => {
+      const fileArray = Array.from(files).filter((f) => f.type.startsWith("image/"));
+      if (fileArray.length === 0) return;
+      const currentPhotos = data.roomPhotos || [];
+      let loaded = 0;
+      const newPhotos: string[] = [];
+      fileArray.forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          newPhotos.push(e.target?.result as string);
+          loaded++;
+          if (loaded === fileArray.length) {
+            onChange({ ...data, roomPhotos: [...currentPhotos, ...newPhotos] });
+          }
+        };
+        reader.readAsDataURL(file);
+      });
     },
     [data, onChange]
   );
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) processFile(file);
+  const handleRoomPhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) processRoomPhotos(files);
+    e.target.value = "";
   };
 
-  const handleRemovePhoto = () => { onChange({ ...data, floorPhoto: null }); };
+  const handleRemoveRoomPhoto = (index: number) => {
+    const updated = (data.roomPhotos || []).filter((_, i) => i !== index);
+    onChange({ ...data, roomPhotos: updated });
+  };
 
   return (
     <div className="space-y-4">
@@ -122,32 +139,41 @@ export function RoomMeasurement({ data, onChange }: RoomMeasurementProps) {
       </div>
 
       <div className="space-y-2">
-        <Label className="text-sm">{t("measurement.floorPhoto")}</Label>
-        <p className="text-xs text-muted-foreground">{t("measurement.floorPhotoDesc")}</p>
+        <Label className="text-sm">{t("measurement.roomPhotos")}</Label>
+        <p className="text-xs text-muted-foreground">{t("measurement.roomPhotosDesc")}</p>
 
-        {data.floorPhoto ? (
-          <div className="relative rounded-lg overflow-hidden border border-border">
-            <img src={data.floorPhoto} alt="Floor photo" className="w-full h-40 object-cover" />
-            <Button type="button" variant="destructive" size="sm" className="absolute top-2 right-2 gap-1" onClick={handleRemovePhoto}>
-              <Trash2 className="w-3.5 h-3.5" />
-              {t("measurement.remove")}
-            </Button>
-          </div>
-        ) : (
-          <div className="flex gap-2">
-            <Button type="button" variant="outline" size="sm" className="gap-1.5 flex-1" onClick={() => cameraInputRef.current?.click()}>
-              <Camera className="w-4 h-4" />
-              {t("measurement.takePhoto")}
-            </Button>
-            <Button type="button" variant="outline" size="sm" className="gap-1.5 flex-1" onClick={() => fileInputRef.current?.click()}>
-              <Upload className="w-4 h-4" />
-              {t("measurement.upload")}
-            </Button>
+        {(data.roomPhotos || []).length > 0 && (
+          <div className="grid grid-cols-3 gap-2">
+            {data.roomPhotos.map((photo, index) => (
+              <div key={index} className="relative rounded-lg overflow-hidden border border-border group">
+                <img src={photo} alt={`Room ${index + 1}`} className="w-full h-24 object-cover" />
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="icon"
+                  className="absolute top-1 right-1 w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => handleRemoveRoomPhoto(index)}
+                >
+                  <Trash2 className="w-3 h-3" />
+                </Button>
+              </div>
+            ))}
           </div>
         )}
 
-        <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
-        <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" onChange={handleFileChange} className="hidden" />
+        <div className="flex gap-2">
+          <Button type="button" variant="outline" size="sm" className="gap-1.5 flex-1" onClick={() => cameraInputRef.current?.click()}>
+            <Camera className="w-4 h-4" />
+            {t("measurement.takePhoto")}
+          </Button>
+          <Button type="button" variant="outline" size="sm" className="gap-1.5 flex-1" onClick={() => fileInputRef.current?.click()}>
+            <Upload className="w-4 h-4" />
+            {t("measurement.upload")}
+          </Button>
+        </div>
+
+        <input ref={fileInputRef} type="file" accept="image/*" multiple onChange={handleRoomPhotoChange} className="hidden" />
+        <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" onChange={handleRoomPhotoChange} className="hidden" />
       </div>
 
       <Alert className="border-destructive/30 bg-destructive/5">
