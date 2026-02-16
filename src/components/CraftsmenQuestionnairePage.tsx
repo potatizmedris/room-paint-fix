@@ -9,6 +9,7 @@ import { BackButton } from "@/components/BackButton";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { MultiRoomMeasurement, type MultiRoomMeasurementData } from "@/components/MultiRoomMeasurement";
+import { ProjectDetailsFields, defaultProjectDetails, type ProjectDetails } from "@/components/ProjectDetailsFields";
 import type { ProjectType } from "@/components/ProjectTypePicker";
 
 interface CraftsmenQuestionnairePageProps {
@@ -47,6 +48,7 @@ export function CraftsmenQuestionnairePage({ projectType, onBack, onComplete }: 
     }],
     grandTotalSquareMeters: 0,
   });
+  const [projectDetails, setProjectDetails] = useState<ProjectDetails>(defaultProjectDetails);
 
   const projectTypeLabel = t(`project.${projectType}`);
 
@@ -64,7 +66,7 @@ export function CraftsmenQuestionnairePage({ projectType, onBack, onComplete }: 
       toast({ title: t("craftsmen.measurementsRequired"), description: t("craftsmen.enterDimensions"), variant: "destructive" });
       return;
     }
-    console.log("Form submitted:", { ...formData, projectType, measurement });
+    console.log("Form submitted:", { ...formData, projectType, measurement, projectDetails });
     setIsSubmitted(true);
   };
 
@@ -149,6 +151,16 @@ export function CraftsmenQuestionnairePage({ projectType, onBack, onComplete }: 
                 {projectType === "painting" && (
                   <div className="border-t border-border pt-4">
                     <MultiRoomMeasurement data={measurement} onChange={setMeasurement} />
+                  </div>
+                )}
+                {projectType === "painting" && (
+                  <div className="border-t border-border pt-4">
+                    <Label className="text-base font-semibold mb-3 block">{t("details.sectionTitle")}</Label>
+                    <ProjectDetailsFields
+                      data={projectDetails}
+                      onChange={setProjectDetails}
+                      hideColorCode={false}
+                    />
                   </div>
                 )}
                 <div className="space-y-2">
