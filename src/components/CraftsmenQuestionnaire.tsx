@@ -7,11 +7,14 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Hammer, ArrowRight, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { RoomMeasurement, type RoomMeasurementData } from "@/components/RoomMeasurement";
+import { MultiRoomMeasurement, type MultiRoomMeasurementData, type MeasurementRoom } from "@/components/MultiRoomMeasurement";
+import type { ProcessedRoom } from "@/components/RoomGallery";
 
 interface CraftsmenQuestionnaireProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /** Rooms from the studio (pre-populated with photos) */
+  studioRooms?: ProcessedRoom[];
 }
 
 interface FormData {
@@ -19,19 +22,41 @@ interface FormData {
   address: string; city: string; postalCode: string; projectDescription: string;
 }
 
-export function CraftsmenQuestionnaire({ open, onOpenChange }: CraftsmenQuestionnaireProps) {
+const generateId = () => `${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
+
+function buildInitialMeasurement(studioRooms: ProcessedRoom[] | undefined, sectionLabel: string, roomLabel: string): MultiRoomMeasurementData {
+  if (studioRooms && studioRooms.length > 0) {
+    const rooms: MeasurementRoom[] = studioRooms.map((sr, i) => ({
+      id: sr.id,
+      label: `${roomLabel} ${i + 1}`,
+      photo: sr.originalImage,
+      sections: [{ id: generateId(), label: `${sectionLabel} 1`, length: "", width: "" }],
+      totalSquareMeters: 0,
+    }));
+    return { rooms, grandTotalSquareMeters: 0 };
+  }
+  return {
+    rooms: [{
+      id: generateId(),
+      label: `${roomLabel} 1`,
+      photo: null,
+      sections: [{ id: generateId(), label: `${sectionLabel} 1`, length: "", width: "" }],
+      totalSquareMeters: 0,
+    }],
+    grandTotalSquareMeters: 0,
+  };
+}
+
+export function CraftsmenQuestionnaire({ open, onOpenChange, studioRooms }: CraftsmenQuestionnaireProps) {
   const { t } = useLanguage();
   const { toast } = useToast();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     firstName: "", lastName: "", email: "", phone: "", address: "", city: "", postalCode: "", projectDescription: "",
   });
-  const [roomMeasurement, setRoomMeasurement] = useState<RoomMeasurementData>({
-    sections: [{ id: "initial", label: `${t("measurement.section")} 1`, length: "", width: "" }],
-    totalSquareMeters: 0,
-    floorPhoto: null,
-    roomPhotos: [],
-  });
+  const [measurement, setMeasurement] = useState<MultiRoomMeasurementData>(
+    buildInitialMeasurement(studioRooms, t("measurement.section"), t("measurement.room"))
+  );
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -43,11 +68,11 @@ export function CraftsmenQuestionnaire({ open, onOpenChange }: CraftsmenQuestion
       toast({ title: t("craftsmen.missingInfo"), description: t("craftsmen.fillRequired"), variant: "destructive" });
       return;
     }
-    if (roomMeasurement.totalSquareMeters <= 0) {
+    if (measurement.grandTotalSquareMeters <= 0) {
       toast({ title: t("craftsmen.measurementsRequired"), description: t("craftsmen.enterDimensions"), variant: "destructive" });
       return;
     }
-    console.log("Form submitted:", { ...formData, roomMeasurement });
+    console.log("Form submitted:", { ...formData, measurement });
     setIsSubmitted(true);
   };
 
@@ -56,9 +81,11 @@ export function CraftsmenQuestionnaire({ open, onOpenChange }: CraftsmenQuestion
     setTimeout(() => {
       setIsSubmitted(false);
       setFormData({ firstName: "", lastName: "", email: "", phone: "", address: "", city: "", postalCode: "", projectDescription: "" });
-      setRoomMeasurement({ sections: [{ id: "initial", label: `${t("measurement.section")} 1`, length: "", width: "" }], totalSquareMeters: 0, floorPhoto: null, roomPhotos: [] });
+      setMeasurement(buildInitialMeasurement(studioRooms, t("measurement.section"), t("measurement.room")));
     }, 300);
   };
+
+  const hasStudioRooms = studioRooms && studioRooms.length > 0;
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -120,7 +147,11 @@ export function CraftsmenQuestionnaire({ open, onOpenChange }: CraftsmenQuestion
                 </div>
               </div>
               <div className="border-t border-border pt-4">
-                <RoomMeasurement data={roomMeasurement} onChange={setRoomMeasurement} />
+                <MultiRoomMeasurement
+                  data={measurement}
+                  onChange={setMeasurement}
+                  readOnlyRooms={hasStudioRooms}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="projectDescription">{t("craftsmen.projectDescription")}</Label>
