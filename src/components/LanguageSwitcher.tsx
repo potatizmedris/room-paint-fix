@@ -8,6 +8,28 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
+const countryCodeMap: Record<string, string> = {
+  sv: "se",
+  en: "gb",
+  es: "es",
+  pl: "pl",
+  de: "de",
+};
+
+function FlagImg({ langCode, size = 20 }: { langCode: string; size?: number }) {
+  const country = countryCodeMap[langCode] || langCode;
+  return (
+    <img
+      src={`https://flagcdn.com/w40/${country}.png`}
+      srcSet={`https://flagcdn.com/w80/${country}.png 2x`}
+      width={size}
+      height={Math.round(size * 0.75)}
+      alt=""
+      className="rounded-[2px] object-cover"
+    />
+  );
+}
+
 export function LanguageSwitcher() {
   const { language, setLanguage } = useLanguage();
   const current = languages.find((l) => l.code === language)!;
@@ -16,7 +38,7 @@ export function LanguageSwitcher() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground text-xs">
-          <span className="text-base leading-none">{current.flag}</span>
+          <FlagImg langCode={language} />
           {current.label}
         </Button>
       </DropdownMenuTrigger>
@@ -27,8 +49,8 @@ export function LanguageSwitcher() {
             onClick={() => setLanguage(lang.code)}
             className={language === lang.code ? "bg-accent" : ""}
           >
-            <span className="mr-2 text-base leading-none">{lang.flag}</span>
-            {lang.label}
+            <FlagImg langCode={lang.code} />
+            <span className="ml-2">{lang.label}</span>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
