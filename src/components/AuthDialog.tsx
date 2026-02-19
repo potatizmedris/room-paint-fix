@@ -86,7 +86,18 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
               <Label htmlFor="signin-password">{t("auth.password")}</Label>
               <Input id="signin-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
             </div>
-            {error && <p className="text-sm text-destructive">{error}</p>}
+            {error && (
+              <div className="space-y-1">
+                <p className="text-sm text-destructive">{error}</p>
+                <button
+                  type="button"
+                  className="text-sm text-primary hover:underline"
+                  onClick={() => {/* TODO: implement password reset */}}
+                >
+                  {t("auth.forgotPassword")}
+                </button>
+              </div>
+            )}
             <Button className="w-full" onClick={() => handleSubmit("signin")} disabled={loading}>
               {loading ? t("auth.signingIn") : t("auth.signIn")}
             </Button>
