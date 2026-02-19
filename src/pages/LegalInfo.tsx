@@ -1,6 +1,6 @@
 import { BackButton } from "@/components/BackButton";
 import { Card, CardContent } from "@/components/ui/card";
-import { Info, Shield, FileText, ChevronRight } from "lucide-react";
+import { Info, Shield, FileText, Copyright, ChevronRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLanguage } from "@/i18n/LanguageContext";
 
@@ -41,6 +41,15 @@ export default function LegalInfo() {
                 <CardContent className="py-4 flex items-center gap-3">
                   <FileText className="w-5 h-5 text-primary shrink-0" />
                   <span className="flex-1 font-medium text-foreground">{t("terms.title")}</span>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+                </CardContent>
+              </Card>
+            </Link>
+            <Link to="/copyright">
+              <Card className="hover:bg-muted/50 transition-colors cursor-pointer mt-3">
+                <CardContent className="py-4 flex items-center gap-3">
+                  <Copyright className="w-5 h-5 text-primary shrink-0" />
+                  <span className="flex-1 font-medium text-foreground">{t("copyright.title")}</span>
                   <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
                 </CardContent>
               </Card>

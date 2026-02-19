@@ -10,6 +10,7 @@ import Account from "./pages/Account";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import LegalInfo from "./pages/LegalInfo";
 import TermsConditions from "./pages/TermsConditions";
+import CopyrightPolicy from "./pages/CopyrightPolicy";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/legal" element={<LegalInfo />} />
             <Route path="/terms" element={<TermsConditions />} />
+            <Route path="/copyright" element={<CopyrightPolicy />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
