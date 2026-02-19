@@ -268,9 +268,28 @@ export function ProjectDetailsFields({ data, onChange, hideColorCode, availableR
         </RadioGroup>
       </div>
 
-      {/* Desired colors per room (only if AI studio not used) */}
-      {!hideColorCode && (
-        <div className="space-y-3">
+      {/* Paint supply — moved before color selection */}
+      <div className="space-y-2">
+        <Label>{t("details.paintSupply")}</Label>
+        <RadioGroup
+          value={data.paintSupply}
+          onValueChange={(v) => update({ paintSupply: v as "customer" | "painter" })}
+          className="flex gap-4"
+        >
+          <div className="flex items-center gap-2">
+            <RadioGroupItem value="customer" id="ps-cust" />
+            <Label htmlFor="ps-cust" className="font-normal cursor-pointer">{t("details.customerSupplies")}</Label>
+          </div>
+          <div className="flex items-center gap-2">
+            <RadioGroupItem value="painter" id="ps-paint" />
+            <Label htmlFor="ps-paint" className="font-normal cursor-pointer">{t("details.painterSupplies")}</Label>
+          </div>
+        </RadioGroup>
+      </div>
+
+      {/* Desired colors per room — only if AI studio not used AND painter supplies paint */}
+      {!hideColorCode && data.paintSupply === "painter" && (
+        <div className="space-y-3 ml-4 pl-3 border-l-2 border-primary/20">
           <div className="flex items-center justify-between">
             <Label className="flex items-center gap-2">
               <Palette className="w-4 h-4 text-primary" />
@@ -351,25 +370,6 @@ export function ProjectDetailsFields({ data, onChange, hideColorCode, availableR
           </Button>
         </div>
       )}
-
-      {/* Paint supply */}
-      <div className="space-y-2">
-        <Label>{t("details.paintSupply")}</Label>
-        <RadioGroup
-          value={data.paintSupply}
-          onValueChange={(v) => update({ paintSupply: v as "customer" | "painter" })}
-          className="flex gap-4"
-        >
-          <div className="flex items-center gap-2">
-            <RadioGroupItem value="customer" id="ps-cust" />
-            <Label htmlFor="ps-cust" className="font-normal cursor-pointer">{t("details.customerSupplies")}</Label>
-          </div>
-          <div className="flex items-center gap-2">
-            <RadioGroupItem value="painter" id="ps-paint" />
-            <Label htmlFor="ps-paint" className="font-normal cursor-pointer">{t("details.painterSupplies")}</Label>
-          </div>
-        </RadioGroup>
-      </div>
 
       {/* Furniture handling */}
       <div className="space-y-2">
