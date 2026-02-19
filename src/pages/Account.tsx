@@ -252,6 +252,11 @@ const Account = () => {
             Delete Account
           </Button>
         </section>
+
+        {/* App Version */}
+        <p className="text-center text-xs text-muted-foreground pt-4 pb-2">
+          HemFix v1.0.0
+        </p>
       </main>
 
       <AccountSettings
