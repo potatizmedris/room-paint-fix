@@ -1,5 +1,6 @@
 import { BackButton } from "@/components/BackButton";
-import { BookOpen } from "lucide-react";
+import { BookOpen, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/i18n/LanguageContext";
 
@@ -24,9 +25,12 @@ export default function AboutHemfix() {
               {t("menu.aboutHemfix")}
             </h1>
           </div>
-          <p className="text-muted-foreground text-center">
-            {t("about.comingSoon")}
-          </p>
+          <Alert className="border-dashed border-primary/40 bg-primary/5">
+            <AlertCircle className="h-4 w-4 text-primary" />
+            <AlertDescription className="text-muted-foreground text-sm">
+              <strong className="text-foreground">Påminnelse:</strong> Här ska vi skriva in vad man som användare kan förvänta sig genom att använda vår app – funktioner, fördelar och vad HemFix erbjuder.
+            </AlertDescription>
+          </Alert>
         </div>
       </main>
     </div>
