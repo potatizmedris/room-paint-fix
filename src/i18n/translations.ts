@@ -151,6 +151,8 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "legal.comingSoon": "Juridisk information kommer snart.",
     "copyright.title": "Hemfix Copyright Policy",
     "copyright.comingSoon": "Innehåll kommer snart.",
+    "about.comingSoon": "Innehåll kommer snart.",
+    "menu.aboutHemfix": "Om Hemfix appar och webbplats",
     "menu.signOut": "Logga ut",
 
     // Account page
@@ -463,6 +465,8 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "legal.comingSoon": "Legal information coming soon.",
     "copyright.title": "Hemfix Copyright Policy",
     "copyright.comingSoon": "Content coming soon.",
+    "about.comingSoon": "Content coming soon.",
+    "menu.aboutHemfix": "About Hemfix apps and website",
     "menu.signOut": "Sign out",
 
     "account.title": "Your Account",
@@ -768,6 +772,8 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "legal.comingSoon": "Información legal próximamente.",
     "copyright.title": "Hemfix Copyright Policy",
     "copyright.comingSoon": "Contenido próximamente.",
+    "about.comingSoon": "Contenido próximamente.",
+    "menu.aboutHemfix": "Acerca de las apps y el sitio web de Hemfix",
     "menu.signOut": "Cerrar sesión",
 
     "account.title": "Tu cuenta",
@@ -1073,6 +1079,8 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "legal.comingSoon": "Informacje prawne wkrótce.",
     "copyright.title": "Hemfix Copyright Policy",
     "copyright.comingSoon": "Treść wkrótce.",
+    "about.comingSoon": "Treść wkrótce.",
+    "menu.aboutHemfix": "O aplikacjach i stronie Hemfix",
     "menu.signOut": "Wyloguj się",
 
     "account.title": "Twoje konto",
@@ -1378,6 +1386,8 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "legal.comingSoon": "Rechtliche Informationen folgen in Kürze.",
     "copyright.title": "Hemfix Copyright Policy",
     "copyright.comingSoon": "Inhalt folgt in Kürze.",
+    "about.comingSoon": "Inhalt folgt in Kürze.",
+    "menu.aboutHemfix": "Über Hemfix Apps und Website",
     "menu.signOut": "Abmelden",
 
     "account.title": "Ihr Konto",

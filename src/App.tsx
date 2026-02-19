@@ -11,6 +11,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import LegalInfo from "./pages/LegalInfo";
 import TermsConditions from "./pages/TermsConditions";
 import CopyrightPolicy from "./pages/CopyrightPolicy";
+import AboutHemfix from "./pages/AboutHemfix";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/legal" element={<LegalInfo />} />
             <Route path="/terms" element={<TermsConditions />} />
             <Route path="/copyright" element={<CopyrightPolicy />} />
+            <Route path="/about" element={<AboutHemfix />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
