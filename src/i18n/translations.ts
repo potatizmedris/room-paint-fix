@@ -139,6 +139,7 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "auth.password": "Lösenord",
     "auth.confirmPassword": "Bekräfta lösenord",
     "auth.signingIn": "Loggar in...",
+    "auth.forgotPassword": "Glömt ditt lösenord?",
     "auth.creatingAccount": "Skapar konto...",
     "auth.createAccount": "Skapa konto",
 
@@ -410,6 +411,7 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "auth.password": "Password",
     "auth.confirmPassword": "Confirm Password",
     "auth.signingIn": "Signing in...",
+    "auth.forgotPassword": "Forgot your password?",
     "auth.creatingAccount": "Creating account...",
     "auth.createAccount": "Create Account",
 
@@ -674,6 +676,7 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "auth.password": "Contraseña",
     "auth.confirmPassword": "Confirmar contraseña",
     "auth.signingIn": "Iniciando sesión...",
+    "auth.forgotPassword": "¿Olvidaste tu contraseña?",
     "auth.creatingAccount": "Creando cuenta...",
     "auth.createAccount": "Crear cuenta",
 
@@ -938,6 +941,7 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "auth.password": "Hasło",
     "auth.confirmPassword": "Potwierdź hasło",
     "auth.signingIn": "Logowanie...",
+    "auth.forgotPassword": "Zapomniałeś hasła?",
     "auth.creatingAccount": "Tworzenie konta...",
     "auth.createAccount": "Utwórz konto",
 
@@ -1202,6 +1206,7 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "auth.password": "Passwort",
     "auth.confirmPassword": "Passwort bestätigen",
     "auth.signingIn": "Anmeldung...",
+    "auth.forgotPassword": "Passwort vergessen?",
     "auth.creatingAccount": "Konto wird erstellt...",
     "auth.createAccount": "Konto erstellen",
 
