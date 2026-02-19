@@ -26,7 +26,7 @@ const PrivacyPolicy = () => {
           <section className="mt-8">
             <h2 className="text-2xl font-serif font-semibold text-foreground">1. Introduction</h2>
             <p className="text-muted-foreground">
-              Welcome to Wall Color Studio ("we," "our," or "us"). We are committed to protecting your personal data 
+              Welcome to HemFix ("we," "our," or "us"). We are committed to protecting your personal data 
               and respecting your privacy. This Privacy Policy explains how we collect, use, store, and protect your 
               information when you use our application.
             </p>
@@ -141,7 +141,7 @@ const PrivacyPolicy = () => {
             <h2 className="text-2xl font-serif font-semibold text-foreground">10. Contact Us</h2>
             <p className="text-muted-foreground">
               If you have any questions about this Privacy Policy or wish to exercise your rights, 
-              please contact us at: <strong className="text-foreground">privacy@wallcolorstudio.app</strong>
+              please contact us at: <strong className="text-foreground">privacy@hemfix.app</strong>
             </p>
           </section>
 
@@ -159,7 +159,7 @@ const PrivacyPolicy = () => {
       <footer className="border-t border-border mt-12 py-6">
         <div className="container mx-auto px-4 text-center">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Wall Color Studio. All rights reserved.
+            © {new Date().getFullYear()} HemFix. All rights reserved.
           </p>
         </div>
       </footer>
