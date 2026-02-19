@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User, LogOut, Shield } from "lucide-react";
+import { User, LogOut, Shield, Info } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 export function UserMenu() {
@@ -54,6 +54,12 @@ export function UserMenu() {
           <Link to="/privacy" className="flex items-center">
             <Shield className="w-4 h-4 mr-2" />
             {t("menu.privacyPolicy")}
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to="/legal" className="flex items-center">
+            <Info className="w-4 h-4 mr-2" />
+            {t("menu.legalInfo")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />

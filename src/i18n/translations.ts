@@ -147,6 +147,8 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "menu.signIn": "Logga in",
     "menu.yourAccount": "Ditt konto",
     "menu.privacyPolicy": "Integritetspolicy",
+    "menu.legalInfo": "Juridisk information",
+    "legal.comingSoon": "Juridisk information kommer snart.",
     "menu.signOut": "Logga ut",
 
     // Account page
@@ -418,6 +420,8 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "menu.signIn": "Sign in",
     "menu.yourAccount": "Your Account",
     "menu.privacyPolicy": "Privacy Policy",
+    "menu.legalInfo": "Legal Information",
+    "legal.comingSoon": "Legal information coming soon.",
     "menu.signOut": "Sign out",
 
     "account.title": "Your Account",
@@ -683,6 +687,8 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "menu.signIn": "Iniciar sesión",
     "menu.yourAccount": "Tu cuenta",
     "menu.privacyPolicy": "Política de privacidad",
+    "menu.legalInfo": "Información legal",
+    "legal.comingSoon": "Información legal próximamente.",
     "menu.signOut": "Cerrar sesión",
 
     "account.title": "Tu cuenta",
@@ -948,6 +954,8 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "menu.signIn": "Zaloguj się",
     "menu.yourAccount": "Twoje konto",
     "menu.privacyPolicy": "Polityka prywatności",
+    "menu.legalInfo": "Informacje prawne",
+    "legal.comingSoon": "Informacje prawne wkrótce.",
     "menu.signOut": "Wyloguj się",
 
     "account.title": "Twoje konto",
@@ -1213,6 +1221,8 @@ export const translations: Record<LanguageCode, TranslationKeys> = {
     "menu.signIn": "Anmelden",
     "menu.yourAccount": "Ihr Konto",
     "menu.privacyPolicy": "Datenschutzrichtlinie",
+    "menu.legalInfo": "Rechtliche Informationen",
+    "legal.comingSoon": "Rechtliche Informationen folgen in Kürze.",
     "menu.signOut": "Abmelden",
 
     "account.title": "Ihr Konto",
