@@ -1,14 +1,21 @@
 import { useState } from "react";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Plus, Trash2, Palette } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/i18n/LanguageContext";
+
+export interface RoomColorEntry {
+  id: string;
+  colorCode: string;
+  roomId: string; // "" means unassigned
+}
 
 export interface ProjectDetails {
   ceilingHeight: string;
@@ -16,7 +23,8 @@ export interface ProjectDetails {
   hasWallpaper: "yes" | "no" | "";
   wallpaperAction: "paint_over" | "remove" | "";
   wallCondition: "new" | "old" | "";
-  desiredColorCode: string;
+  desiredColorCode: string; // kept for backwards compat
+  roomColors: RoomColorEntry[];
   paintSupply: "customer" | "painter" | "";
   furnitureHandling: "customer" | "painter" | "";
   preferredTime: "daytime" | "evening" | "";
@@ -30,20 +38,30 @@ export const defaultProjectDetails: ProjectDetails = {
   wallpaperAction: "",
   wallCondition: "",
   desiredColorCode: "",
+  roomColors: [],
   paintSupply: "",
   furnitureHandling: "",
   preferredTime: "",
   preferredDate: undefined,
 };
 
+const generateColorId = () => `color-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
+
+interface RoomOption {
+  id: string;
+  label: string;
+}
+
 interface ProjectDetailsFieldsProps {
   data: ProjectDetails;
   onChange: (data: ProjectDetails) => void;
   /** If true, the AI studio was used so color code field is hidden */
   hideColorCode?: boolean;
+  /** Available rooms for color assignment */
+  availableRooms?: RoomOption[];
 }
 
-export function ProjectDetailsFields({ data, onChange, hideColorCode }: ProjectDetailsFieldsProps) {
+export function ProjectDetailsFields({ data, onChange, hideColorCode, availableRooms = [] }: ProjectDetailsFieldsProps) {
   const { t } = useLanguage();
 
   const update = (partial: Partial<ProjectDetails>) => {
@@ -150,15 +168,87 @@ export function ProjectDetailsFields({ data, onChange, hideColorCode }: ProjectD
         </RadioGroup>
       </div>
 
-      {/* Desired color code (only if AI studio not used) */}
+      {/* Desired colors per room (only if AI studio not used) */}
       {!hideColorCode && (
-        <div className="space-y-2">
-          <Label>{t("details.desiredColor")}</Label>
-          <Input
-            value={data.desiredColorCode}
-            onChange={(e) => update({ desiredColorCode: e.target.value })}
-            placeholder={t("details.desiredColorPlaceholder")}
-          />
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <Label className="flex items-center gap-2">
+              <Palette className="w-4 h-4 text-primary" />
+              {t("details.desiredColor")}
+            </Label>
+          </div>
+
+          {data.roomColors.length === 0 && (
+            <p className="text-xs text-muted-foreground">{t("details.noColorsAdded")}</p>
+          )}
+
+          {data.roomColors.map((entry) => (
+            <div key={entry.id} className="flex items-end gap-2 p-3 rounded-lg bg-muted/40 border border-border">
+              <div className="flex-1 space-y-1.5">
+                <Label className="text-xs text-muted-foreground">{t("details.colorCode")}</Label>
+                <Input
+                  value={entry.colorCode}
+                  onChange={(e) => {
+                    const newColors = data.roomColors.map(c =>
+                      c.id === entry.id ? { ...c, colorCode: e.target.value } : c
+                    );
+                    update({ roomColors: newColors });
+                  }}
+                  placeholder={t("details.desiredColorPlaceholder")}
+                />
+              </div>
+              {availableRooms.length > 0 && (
+                <div className="flex-1 space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">{t("details.assignToRoom")}</Label>
+                  <Select
+                    value={entry.roomId}
+                    onValueChange={(v) => {
+                      const newColors = data.roomColors.map(c =>
+                        c.id === entry.id ? { ...c, roomId: v === "__none__" ? "" : v } : c
+                      );
+                      update({ roomColors: newColors });
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={t("details.selectRoom")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__none__">{t("details.allRooms")}</SelectItem>
+                      {availableRooms.map((room) => (
+                        <SelectItem key={room.id} value={room.id}>{room.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="shrink-0 text-muted-foreground hover:text-destructive"
+                onClick={() => {
+                  const newColors = data.roomColors.filter(c => c.id !== entry.id);
+                  update({ roomColors: newColors });
+                }}
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </div>
+          ))}
+
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="gap-1.5 text-xs"
+            onClick={() => {
+              const newEntry: RoomColorEntry = { id: generateColorId(), colorCode: "", roomId: "" };
+              update({ roomColors: [...data.roomColors, newEntry] });
+            }}
+          >
+            <Plus className="w-3.5 h-3.5" />
+            {t("details.addColor")}
+          </Button>
         </div>
       )}
 

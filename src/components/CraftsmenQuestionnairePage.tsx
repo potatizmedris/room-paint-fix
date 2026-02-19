@@ -160,6 +160,7 @@ export function CraftsmenQuestionnairePage({ projectType, onBack, onComplete }: 
                       data={projectDetails}
                       onChange={setProjectDetails}
                       hideColorCode={false}
+                      availableRooms={measurement.rooms.map((r, i) => ({ id: r.id, label: `${t("measurement.room")} ${i + 1}` }))}
                     />
                   </div>
                 )}

@@ -162,6 +162,7 @@ export function CraftsmenQuestionnaire({ open, onOpenChange, studioRooms }: Craf
                   data={projectDetails}
                   onChange={setProjectDetails}
                   hideColorCode={hasStudioRooms}
+                  availableRooms={measurement.rooms.map((r, i) => ({ id: r.id, label: `${t("measurement.room")} ${i + 1}` }))}
                 />
               </div>
               <div className="space-y-2">
