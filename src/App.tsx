@@ -8,6 +8,7 @@ import { LanguageProvider } from "@/i18n/LanguageContext";
 import Index from "./pages/Index";
 import Account from "./pages/Account";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import LegalInfo from "./pages/LegalInfo";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/account" element={<Account />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/legal" element={<LegalInfo />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
