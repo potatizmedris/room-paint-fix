@@ -1,7 +1,7 @@
 import { BackButton } from "@/components/BackButton";
 import { Card, CardContent } from "@/components/ui/card";
-import { Info } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Info, Shield, ChevronRight } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function LegalInfo() {
@@ -25,11 +25,18 @@ export default function LegalInfo() {
               {t("menu.legalInfo")}
             </h1>
           </div>
-          <Card>
-            <CardContent className="py-8 text-center text-muted-foreground">
-              <p>{t("legal.comingSoon")}</p>
-            </CardContent>
-          </Card>
+
+          <div className="space-y-3">
+            <Link to="/privacy">
+              <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
+                <CardContent className="py-4 flex items-center gap-3">
+                  <Shield className="w-5 h-5 text-primary shrink-0" />
+                  <span className="flex-1 font-medium text-foreground">{t("menu.privacyPolicy")}</span>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+                </CardContent>
+              </Card>
+            </Link>
+          </div>
         </div>
       </main>
     </div>
