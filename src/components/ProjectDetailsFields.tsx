@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { format } from "date-fns";
-import { CalendarIcon, Plus, Trash2, Palette } from "lucide-react";
+import { CalendarIcon, Plus, Trash2, Palette, Search, Check } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -8,8 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { NCS_COLORS, NCS_CATEGORIES, type NCSColor } from "@/data/ncsColors";
 
 export interface RoomColorEntry {
   id: string;
@@ -59,6 +61,104 @@ interface ProjectDetailsFieldsProps {
   hideColorCode?: boolean;
   /** Available rooms for color assignment */
   availableRooms?: RoomOption[];
+}
+
+/** Inline NCS color picker with search + manual input */
+function NCSColorInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder?: string }) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const { t } = useLanguage();
+
+  const matchedColor = NCS_COLORS.find(c => c.code === value);
+
+  const filtered = useMemo(() => {
+    if (!search) return NCS_COLORS;
+    const q = search.toLowerCase();
+    return NCS_COLORS.filter(c =>
+      c.code.toLowerCase().includes(q) || c.name.toLowerCase().includes(q) || c.category.toLowerCase().includes(q)
+    );
+  }, [search]);
+
+  const grouped = useMemo(() => {
+    const map = new Map<string, NCSColor[]>();
+    for (const c of filtered) {
+      const arr = map.get(c.category) || [];
+      arr.push(c);
+      map.set(c.category, arr);
+    }
+    return map;
+  }, [filtered]);
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          type="button"
+          role="combobox"
+          aria-expanded={open}
+          className={cn("w-full justify-start text-left font-normal h-10 gap-2", !value && "text-muted-foreground")}
+        >
+          {matchedColor && (
+            <span className="w-4 h-4 rounded-sm border border-border shrink-0" style={{ backgroundColor: matchedColor.hex }} />
+          )}
+          <span className="truncate">{value || placeholder}</span>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-72 p-0 bg-popover border border-border z-50" align="start">
+        <div className="p-2 border-b border-border">
+          <div className="flex items-center gap-2 px-2 py-1 rounded-md bg-muted/50">
+            <Search className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={t("details.searchOrType")}
+              className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+            />
+          </div>
+        </div>
+        <ScrollArea className="h-60">
+          <div className="p-1">
+            {/* If user typed something not in the DB, offer to use it as-is */}
+            {search && !NCS_COLORS.some(c => c.code.toLowerCase() === search.toLowerCase()) && (
+              <button
+                type="button"
+                className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm hover:bg-accent text-left"
+                onClick={() => { onChange(search.toUpperCase()); setOpen(false); setSearch(""); }}
+              >
+                <Palette className="w-3.5 h-3.5 text-primary shrink-0" />
+                <span className="truncate">{t("details.useCustomCode")} <strong>{search.toUpperCase()}</strong></span>
+              </button>
+            )}
+            {Array.from(grouped.entries()).map(([category, colors]) => (
+              <div key={category}>
+                <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground sticky top-0 bg-popover">{category}</div>
+                {colors.map((color) => (
+                  <button
+                    key={color.code}
+                    type="button"
+                    className={cn(
+                      "w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm hover:bg-accent text-left",
+                      value === color.code && "bg-accent"
+                    )}
+                    onClick={() => { onChange(color.code); setOpen(false); setSearch(""); }}
+                  >
+                    <span className="w-4 h-4 rounded-sm border border-border shrink-0" style={{ backgroundColor: color.hex }} />
+                    <span className="truncate flex-1">{color.name}</span>
+                    <span className="text-xs text-muted-foreground shrink-0">{color.code}</span>
+                    {value === color.code && <Check className="w-3.5 h-3.5 text-primary shrink-0" />}
+                  </button>
+                ))}
+              </div>
+            ))}
+            {filtered.length === 0 && !search && (
+              <p className="text-xs text-muted-foreground text-center py-4">{t("details.noColorsFound")}</p>
+            )}
+          </div>
+        </ScrollArea>
+      </PopoverContent>
+    </Popover>
+  );
 }
 
 export function ProjectDetailsFields({ data, onChange, hideColorCode, availableRooms = [] }: ProjectDetailsFieldsProps) {
@@ -186,11 +286,11 @@ export function ProjectDetailsFields({ data, onChange, hideColorCode, availableR
             <div key={entry.id} className="flex items-end gap-2 p-3 rounded-lg bg-muted/40 border border-border">
               <div className="flex-1 space-y-1.5">
                 <Label className="text-xs text-muted-foreground">{t("details.colorCode")}</Label>
-                <Input
+                <NCSColorInput
                   value={entry.colorCode}
-                  onChange={(e) => {
+                  onChange={(val) => {
                     const newColors = data.roomColors.map(c =>
-                      c.id === entry.id ? { ...c, colorCode: e.target.value } : c
+                      c.id === entry.id ? { ...c, colorCode: val } : c
                     );
                     update({ roomColors: newColors });
                   }}
