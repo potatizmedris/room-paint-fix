@@ -97,6 +97,26 @@ export function CraftsmenQuestionnaire({ open, onOpenChange, studioRooms }: Craf
 
   const hasStudioRooms = studioRooms && studioRooms.length > 0;
 
+  // Pre-populate roomColors from studio colors when dialog opens
+  useEffect(() => {
+    if (open && hasStudioRooms) {
+      const studioColors = studioRooms
+        .filter(r => r.colorName && r.colorHex)
+        .map((r, i) => ({
+          id: `studio-${r.id}`,
+          colorCode: r.colorName,
+          roomId: r.id,
+        }));
+      if (studioColors.length > 0) {
+        setProjectDetails(prev => ({
+          ...prev,
+          paintSupply: prev.paintSupply || "painter",
+          roomColors: studioColors,
+        }));
+      }
+    }
+  }, [open, hasStudioRooms, studioRooms]);
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
@@ -168,7 +188,7 @@ export function CraftsmenQuestionnaire({ open, onOpenChange, studioRooms }: Craf
                 <ProjectDetailsFields
                   data={projectDetails}
                   onChange={setProjectDetails}
-                  hideColorCode={hasStudioRooms}
+                  hideColorCode={false}
                   availableRooms={measurement.rooms.map((r, i) => ({ id: r.id, label: `${t("measurement.room")} ${i + 1}` }))}
                 />
               </div>
