@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -59,6 +59,13 @@ export function CraftsmenQuestionnaire({ open, onOpenChange, studioRooms }: Craf
     buildInitialMeasurement(studioRooms, t("measurement.section"), t("measurement.room"))
   );
   const [projectDetails, setProjectDetails] = useState<ProjectDetails>(defaultProjectDetails);
+
+  // Re-initialize measurement when dialog opens with updated studioRooms
+  useEffect(() => {
+    if (open) {
+      setMeasurement(buildInitialMeasurement(studioRooms, t("measurement.section"), t("measurement.room")));
+    }
+  }, [open, studioRooms, t]);
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
