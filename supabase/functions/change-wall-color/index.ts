@@ -116,7 +116,26 @@ serve(async (req) => {
       );
     }
 
-    const data = await response.json();
+    const responseText = await response.text();
+    if (!responseText) {
+      console.error('AI gateway returned empty response');
+      return new Response(
+        JSON.stringify({ error: 'AI service returned an empty response. Please try again.' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error('Failed to parse AI response:', responseText.substring(0, 500));
+      return new Response(
+        JSON.stringify({ error: 'Invalid response from AI service. Please try again.' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     console.log('AI response structure:', JSON.stringify({
       hasChoices: !!data.choices,
       choicesLength: data.choices?.length,
