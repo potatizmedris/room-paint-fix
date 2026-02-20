@@ -136,13 +136,17 @@ serve(async (req) => {
       );
     }
 
+    const message = data.choices?.[0]?.message;
     console.log('AI response structure:', JSON.stringify({
       hasChoices: !!data.choices,
       choicesLength: data.choices?.length,
-      hasMessage: !!data.choices?.[0]?.message,
-      hasImages: !!data.choices?.[0]?.message?.images,
-      imagesLength: data.choices?.[0]?.message?.images?.length,
-      messageContent: data.choices?.[0]?.message?.content?.substring(0, 200),
+      messageKeys: message ? Object.keys(message) : [],
+      hasImages: !!message?.images,
+      imagesLength: message?.images?.length,
+      contentType: typeof message?.content,
+      contentLength: typeof message?.content === 'string' ? message.content.length : 0,
+      contentPreview: typeof message?.content === 'string' ? message.content.substring(0, 300) : JSON.stringify(message?.content)?.substring(0, 300),
+      finishReason: data.choices?.[0]?.finish_reason,
     }));
 
     const editedImageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
