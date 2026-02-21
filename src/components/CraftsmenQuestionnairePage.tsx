@@ -4,10 +4,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { Hammer, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Hammer, ArrowRight, CheckCircle2, Lock } from "lucide-react";
 import { BackButton } from "@/components/BackButton";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { useAuth } from "@/hooks/useAuth";
+import { AuthDialog } from "@/components/AuthDialog";
 import { MultiRoomMeasurement, type MultiRoomMeasurementData } from "@/components/MultiRoomMeasurement";
 import { ProjectDetailsFields, defaultProjectDetails, type ProjectDetails } from "@/components/ProjectDetailsFields";
 import type { ProjectType } from "@/components/ProjectTypePicker";
@@ -34,6 +36,8 @@ const generateId = () => `${Date.now()}-${Math.random().toString(36).substr(2, 6
 export function CraftsmenQuestionnairePage({ projectType, onBack, onComplete }: CraftsmenQuestionnairePageProps) {
   const { t } = useLanguage();
   const { toast } = useToast();
+  const { user, loading: authLoading } = useAuth();
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     firstName: "", lastName: "", email: "", phone: "", address: "", city: "", postalCode: "", projectDescription: "",
@@ -89,6 +93,40 @@ export function CraftsmenQuestionnairePage({ projectType, onBack, onComplete }: 
             </CardContent>
           </Card>
         </main>
+      </div>
+    );
+  }
+
+  // Auth gate: require sign-in to generate quotes
+  if (!authLoading && !user) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
+          <div className="container mx-auto px-4 py-4">
+            <BackButton onClick={onBack} />
+          </div>
+        </header>
+        <main className="flex-1 container mx-auto px-4 py-12 flex items-center justify-center">
+          <Card className="max-w-md w-full">
+            <CardContent className="py-12 text-center space-y-6">
+              <div className="w-20 h-20 rounded-full bg-muted mx-auto flex items-center justify-center">
+                <Lock className="w-10 h-10 text-muted-foreground" />
+              </div>
+              <div className="space-y-2">
+                <h2 className="font-serif text-2xl font-semibold text-foreground">
+                  {t("craftsmen.loginRequired")}
+                </h2>
+                <p className="text-muted-foreground">
+                  {t("craftsmen.loginRequiredDesc")}
+                </p>
+              </div>
+              <Button onClick={() => setAuthDialogOpen(true)} className="gap-2">
+                {t("menu.signIn")}
+              </Button>
+            </CardContent>
+          </Card>
+        </main>
+        <AuthDialog open={authDialogOpen} onOpenChange={setAuthDialogOpen} />
       </div>
     );
   }
