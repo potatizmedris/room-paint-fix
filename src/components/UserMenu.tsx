@@ -25,12 +25,33 @@ export function UserMenu() {
 
   if (!user) {
     return (
-      <>
+      <div className="flex items-center gap-1">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Info className="w-4 h-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem asChild>
+              <Link to="/legal" className="flex items-center">
+                <Info className="w-4 h-4 mr-2" />
+                {t("menu.legalInfo")}
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to="/about" className="flex items-center">
+                <BookOpen className="w-4 h-4 mr-2" />
+                {t("menu.aboutHemfix")}
+              </Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         <Button variant="outline" size="sm" onClick={() => setAuthDialogOpen(true)}>
           {t("menu.signIn")}
         </Button>
         <AuthDialog open={authDialogOpen} onOpenChange={setAuthDialogOpen} />
-      </>
+      </div>
     );
   }
 
